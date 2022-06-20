@@ -1,12 +1,10 @@
-import React from "react";
-import { View, Text, Image, Pressable } from "react-native";
-import { ButtonComponent, ProfileComponent } from "../components/";
+import React from 'react';
+import { View, Text, Image, Pressable } from 'react-native';
+import { ButtonComponent, ProfileComponent } from '../components/';
 
 interface ImcProps {
     profile: UserProfile;
-    navigation: any
-
-
+    navigation: any;
 }
 interface UserProfile {
     id: number;
@@ -24,7 +22,6 @@ const StateInfo = (props: ImcProps) => {
             <Text>State & info</Text>
         </View>
     );
-}
-
+};
 
 export default StateInfo;

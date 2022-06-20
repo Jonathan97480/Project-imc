@@ -1,13 +1,11 @@
-import React from "react";
-import { View, Text, Image, Pressable } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { ButtonComponent, ProfileComponent } from "../components/";
+import React from 'react';
+import { View, Text, Image, Pressable } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { ButtonComponent, ProfileComponent } from '../components/';
 
 interface ProfileProps {
     profile: UserProfile;
-    navigation: any
-
-
+    navigation: any;
 }
 interface UserProfile {
     id: number;
@@ -19,17 +17,12 @@ interface UserProfile {
 }
 
 const Profile = (props: ProfileProps) => {
-    console.log(props.profile);
+
     const { navigation, profile } = props;
-
-
 
     return (
         <View>
-
-            <ProfileComponent
-                profile={profile}
-            />
+            <ProfileComponent profile={profile} />
             <View>
                 <Text>Taille</Text>
                 <Text>{profile.user_size}</Text>
@@ -42,31 +35,24 @@ const Profile = (props: ProfileProps) => {
 
             <ButtonComponent
                 onPress={() => {
-
                     navigation.navigate("IMC CALCUL");
-
-                }
-                }
+                }}
                 title="IMC CALCUL"
                 color="#00ff00"
-                incon="plus" />
-
+                incon="plus"
+            />
         </View>
     );
-}
+};
 
 export default Profile;
 
-
-const ProfileDetails = (props) => {
+const ProfileDetails = props => {
     const { route, navigation } = props;
     const profile: UserProfile = route.params.profile;
     return (
         <View>
-
-            <ProfileComponent
-                profile={profile}
-            />
+            <ProfileComponent profile={profile} />
             <View>
                 <Text>Taille</Text>
                 <Text>{profile.user_size}</Text>
@@ -78,15 +64,11 @@ const ProfileDetails = (props) => {
             </View>
 
             <ButtonComponent
-                onPress={() => {
-
-
-                }
-                }
+                onPress={() => { }}
                 title="IMC CALCUL"
                 color="#00ff00"
-                incon="plus" />
-
+                incon="plus"
+            />
         </View>
     );
-}
+};
