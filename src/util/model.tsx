@@ -1,14 +1,14 @@
 /* SqlLite data base */
-import { openDatabase, SQLiteDatabase } from 'react-native-sqlite-storage';
+import { openDatabase, ResultSet, SQLiteDatabase } from 'react-native-sqlite-storage';
 
 
 
-function dbInit(): Promise<SQLiteDatabase> {
-  const db: Promise<SQLiteDatabase> = openDatabase({
+async function dbInit(): Promise<SQLiteDatabase> {
+  return await openDatabase({
     name: "rn_sqlite",
     location: "default",
   });
-  return db
+
 }
 async function get(db, table, id) {
   db.transation(tx => {
@@ -120,18 +120,21 @@ async function drop(db, table) {
  * @param {string} table
  * @param {Array} columns
  */
-async function createTable(db, table, columns) {
+function createTable(db: SQLiteDatabase, table: string, columns: string[], callBack: (result: ResultSet) => void) {
   db.transaction(tx => {
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS ${table} (${columns.join(" , ")})`,
       [],
       (tx, results) => {
-        console.log("Query success");
-        return results.rows.item(0);
+
+        callBack(results);
       },
-      error => console.log(error),
+      (error) => {
+        throw new Error(error.toString());
+      },
     );
   });
+
 }
 
 

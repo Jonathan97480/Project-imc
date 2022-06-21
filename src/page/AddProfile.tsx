@@ -1,22 +1,15 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { View, Text, Image, Pressable, PermissionsAndroid, TextInput } from "react-native";
 import { SQLiteDatabase } from "react-native-sqlite-storage";
 import { ButtonComponent } from "../components/";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { UserProfile } from "../interfaces";
+
 interface HomeProps {
     db: SQLiteDatabase;
-    handleProfile: Function;
+    handleProfile: (profile: UserProfile) => void;
     navigation: any;
-}
-
-interface UserProfile {
-    id: number;
-    user_name: string;
-    user_sexe: string;
-    user_age: number;
-    user_size: number;
-    user_avatar: string | undefined;
 }
 
 const AddProfile = (props: HomeProps) => {
@@ -33,13 +26,6 @@ const AddProfile = (props: HomeProps) => {
     });
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [isScreen2, setIsScreen2] = React.useState<boolean>(false);
-
-
-    useEffect(() => {
-
-
-
-    }, []);
 
     if (isLoading) {
         return <Text>Loading...</Text>;
@@ -118,7 +104,6 @@ const AddProfile = (props: HomeProps) => {
                                                 setProfile({
                                                     ...profile,
                                                     user_avatar: response.assets ? response.assets[0].uri : "",
-
                                                 });
 
                                             }
@@ -208,12 +193,29 @@ const AddProfile = (props: HomeProps) => {
                 <ButtonComponent
                     onPress={
                         () => {
-                            setIsScreen2(true);
+
+                            if (profile.user_name !== "") {
+
+                                if (profile.user_sexe != "") {
+
+                                    setIsScreen2(true);
+
+                                } else {
+
+                                    alert("Veuillez selectionner votre sexe");
+
+                                }
+
+                            } else {
+
+                                alert("Veuillez entrer un nom");
+
+                            }
                         }
                     }
                     title="Suivant"
                     color="black"
-                    incon="add"
+                    incon="image"
                 />
 
             </View>
@@ -235,6 +237,7 @@ const AddProfile = (props: HomeProps) => {
                     }
 
                     }
+                    keyboardType="numeric"
                 />
                 <Text>Votre age</Text>
                 <TextInput
@@ -246,39 +249,54 @@ const AddProfile = (props: HomeProps) => {
                         });
                     }
                     }
+                    keyboardType="numeric"
+
                 />
                 <ButtonComponent
                     onPress={
                         () => {
-                            setIsLoading(true);
-                            db.transaction(
-                                (tx) => {
-                                    tx.executeSql(
-                                        "INSERT INTO profile (user_name, user_sexe, user_age, user_size, user_avatar) VALUES (?,?,?,?,?)",
-                                        [profile.user_name, profile.user_sexe, profile.user_age, profile.user_size, profile.user_avatar],
-                                        (tx, results) => {
-                                            console.log("Results", results);
-                                            handleProfile({
-                                                user_name: profile.user_name,
-                                                user_sexe: profile.user_sexe,
-                                                user_age: profile.user_age,
-                                                user_size: profile.user_size,
-                                                user_avatar: profile.user_avatar,
-                                                id: results.insertId
 
-                                            });
-                                            setIsLoading(false);
-                                            navigation.navigate("Home");
+                            if (profile.user_name === "" || profile.user_size === 0 || profile.user_age === 0) {
+                                alert("Veuillez remplir tous les champs");
+                            }
+
+                            else {
+                                setIsLoading(true);
+                                try {
+                                    db.transaction(
+                                        (tx) => {
+                                            tx.executeSql(
+                                                "INSERT INTO profile (user_name, user_sexe, user_age, user_size, user_avatar) VALUES (?,?,?,?,?)",
+                                                [profile.user_name, profile.user_sexe, profile.user_age, profile.user_size, profile.user_avatar],
+                                                (tx, results) => {
+
+                                                    handleProfile({
+                                                        user_name: profile.user_name,
+                                                        user_sexe: profile.user_sexe,
+                                                        user_age: profile.user_age,
+                                                        user_size: profile.user_size,
+                                                        user_avatar: profile.user_avatar,
+                                                        id: results.insertId
+
+                                                    });
+                                                    setIsLoading(false);
+                                                    navigation.navigate("PROFILE");
+                                                }, (error) => {
+                                                    throw new Error(error.toString());
+                                                }
+                                            );
                                         }
                                     );
+                                } catch (err) {
+                                    console.warn(err);
                                 }
-                            );
+                            }
                         }
 
                     }
                     title="Suivant"
                     color="black"
-                    incon="add"
+                    incon='image'
                 />
 
             </View>

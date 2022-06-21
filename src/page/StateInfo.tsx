@@ -1,19 +1,15 @@
 import React from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { ButtonComponent, ProfileComponent } from '../components/';
+import { UserProfile } from '../interfaces';
+import { SQLiteDatabase } from 'react-native-sqlite-storage';
 
 interface ImcProps {
-    profile: UserProfile;
-    navigation: any;
+    profile: UserProfile | null;
+    navigation: any
+    db: SQLiteDatabase
 }
-interface UserProfile {
-    id: number;
-    user_name: string;
-    user_sexe: string;
-    user_age: number;
-    user_size: number;
-    user_avatar: string;
-}
+
 
 const StateInfo = (props: ImcProps) => {
     const { navigation, profile } = props;

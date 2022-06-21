@@ -1,16 +1,8 @@
 import React from "react";
 import { View, Text, Image, Pressable } from "react-native";
-interface UserProfile {
-    id: number;
-    user_name: string;
-    user_sexe: string;
-    user_age: number;
-    user_size: number;
-    user_avatar: string;
-}
-
+import { UserProfile } from "../interfaces";
 interface ProfileComponentProps {
-    profile: UserProfile;
+    profile: UserProfile | null;
     onPress?: () => void;
 }
 const ProfileComponent = (props: ProfileComponentProps) => {

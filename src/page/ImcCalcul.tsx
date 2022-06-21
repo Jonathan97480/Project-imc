@@ -2,20 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, Image, Pressable, TextInput, TextInputChangeEventData } from 'react-native';
 import { SQLiteDatabase } from 'react-native-sqlite-storage';
 import { ButtonComponent, ProfileComponent, VuMeterComponent } from '../components/';
+import { UserProfile } from '../interfaces';
 
 interface ImcProps {
-    profile: UserProfile;
+    profile: UserProfile | null;
     navigation: any;
     db: SQLiteDatabase;
 }
-interface UserProfile {
-    id: number;
-    user_name: string;
-    user_sexe: string;
-    user_age: number;
-    user_size: number;
-    user_avatar: string;
-}
+
 
 const ImcCalcul = (props: ImcProps) => {
     const { navigation, profile, db } = props;
@@ -23,11 +17,11 @@ const ImcCalcul = (props: ImcProps) => {
     const [poids, setPoids] = React.useState(0);
     const [details, setDetails] = React.useState(false);
 
-    const insertImc = () => {
+    const insertImc = async () => {
         let curentDate = new Date();
-        db.transaction(tx => {
+        await db.transaction(tx => {
             tx.executeSql('INSERT INTO imc (user_id, user_name, user_poids, user_imc, imc_date) VALUES (?,?,?,?,?)',
-                [profile.id, profile.user_name, poids.toString(), imc.toString(), curentDate.toDateString()]);
+                [profile?.id, profile?.user_name, poids.toString(), imc.toString(), curentDate.toDateString()]);
 
         })
 
@@ -46,22 +40,23 @@ const ImcCalcul = (props: ImcProps) => {
 
     const handleImc = () => {
 
-        const value1: number = profile.user_size * 2;
-        let result: number = poids / value1;
+        if (profile?.user_size != undefined && poids != 0) {
 
-        result = Math.round(result * 100) / 100
-        result = parseInt(result.toString().split(".")[1]);
+            const value1: number = profile?.user_size * 2;
+            let result: number = poids / value1;
 
-        insertImc();
+            result = Math.round(result * 100) / 100
+            result = parseInt(result.toString().split(".")[1]);
 
-        setImc(result);
-        setPoids(0);
-        setDetails(true)
+            insertImc();
 
+            setImc(result);
+            setPoids(0);
+            setDetails(true)
+            return
+        }
 
-        /* Save in Database */
-
-
+        throw new Error("Veuillez renseigner votre votre poids");
 
     }
 

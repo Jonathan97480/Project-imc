@@ -3,15 +3,12 @@ import React from "react";
 import { View, Text, Image, Pressable } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-
-
 interface ButtonProps {
     onPress: () => void;
     title: string;
     color: string;
     incon: string;
 }
-
 
 const ButtonComponent = (props: ButtonProps) => {
 

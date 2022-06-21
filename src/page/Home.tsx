@@ -1,24 +1,16 @@
 import {
     View,
     Text,
-    SafeAreaView,
     FlatList,
     StyleSheet,
     ViewStyle,
 } from "react-native";
 import React, { useEffect } from "react";
-import { dbInit, getAll, insert } from "../util/model";
 import { ProfileComponent, ButtonComponent } from "../components/";
 import { SQLiteDatabase } from "react-native-sqlite-storage";
+import { UserProfile } from "../interfaces";
 
-interface UserProfile {
-    id: number;
-    user_name: string;
-    user_sexe: string;
-    user_age: number;
-    user_size: number;
-    user_avatar: string;
-}
+
 
 interface HomeProps {
     db: SQLiteDatabase;

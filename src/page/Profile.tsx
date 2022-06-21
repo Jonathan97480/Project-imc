@@ -2,19 +2,14 @@ import React from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { ButtonComponent, ProfileComponent } from '../components/';
-
+import { UserProfile } from '../interfaces';
+import { SQLiteDatabase } from 'react-native-sqlite-storage';
 interface ProfileProps {
-    profile: UserProfile;
-    navigation: any;
+    profile: UserProfile | null;
+    navigation: any
+    db: SQLiteDatabase
 }
-interface UserProfile {
-    id: number;
-    user_name: string;
-    user_sexe: string;
-    user_age: number;
-    user_size: number;
-    user_avatar: string;
-}
+
 
 const Profile = (props: ProfileProps) => {
 
@@ -25,12 +20,12 @@ const Profile = (props: ProfileProps) => {
             <ProfileComponent profile={profile} />
             <View>
                 <Text>Taille</Text>
-                <Text>{profile.user_size}</Text>
+                <Text>{profile?.user_size}</Text>
             </View>
 
             <View>
                 <Text>Age</Text>
-                <Text>{profile.user_age}</Text>
+                <Text>{profile?.user_age}</Text>
             </View>
 
             <ButtonComponent
