@@ -4,6 +4,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { ButtonComponent, ProfileComponent } from '../components/';
 import { UserProfile } from '../interfaces';
 import { SQLiteDatabase } from 'react-native-sqlite-storage';
+
+
 interface ProfileProps {
     profile: UserProfile | null;
     navigation: any
@@ -67,3 +69,5 @@ const ProfileDetails = props => {
         </View>
     );
 };
+
+

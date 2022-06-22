@@ -19,6 +19,7 @@ let curentUser: UserProfile | null = null;
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
+
 const App = () => {
 
   useEffect(() => {

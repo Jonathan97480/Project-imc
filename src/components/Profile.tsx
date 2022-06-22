@@ -1,13 +1,22 @@
 import React from "react";
-import { View, Text, Image, Pressable } from "react-native";
+import {
+    View,
+    Text,
+    Image,
+    Pressable,
+    TouchableOpacity,
+    Alert
+} from "react-native";
 import { UserProfile } from "../interfaces";
+
 interface ProfileComponentProps {
     profile: UserProfile | null;
     onPress?: () => void;
+    onLongPress?: () => void
 }
 const ProfileComponent = (props: ProfileComponentProps) => {
 
-    const { profile } = props;
+    const { profile, onLongPress } = props;
 
     if (!profile) {
         return (
@@ -18,12 +27,18 @@ const ProfileComponent = (props: ProfileComponentProps) => {
 
 
     return (
-        <Pressable
+        <TouchableOpacity
             onPress={() => {
                 if (props.onPress) {
                     props.onPress();
                 }
             }
+            }
+
+            onLongPress={
+                () => {
+                    onLongPress ? onLongPress() : ""
+                }
             }
 
         >
@@ -51,9 +66,10 @@ const ProfileComponent = (props: ProfileComponentProps) => {
                 <Text>{profile?.user_name}</Text>
 
             </View>
-        </Pressable >
+        </TouchableOpacity >
     );
 }
+
 
 
 export default ProfileComponent;
