@@ -6,7 +6,8 @@
     "extends": [
         "eslint:recommended",
         "plugin:react/recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -18,24 +19,22 @@
     },
     "plugins": [
         "react",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "prettier"
     ],
     "rules": {
-        "indent": [
+        "react/react-in-jsx-scope": "off",
+        "@typescript-eslint/no-namespace": "off",
+        "@typescript-eslint/prefer-namespace-keyword": "off",
+        "indent": "off",
+        "@typescript-eslint/indent": [
             "error",
-            "tab"
+            2
         ],
-        "linebreak-style": [
-            "error",
-            "windows"
-        ],
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "semi": [
-            "error",
-            "always"
+        "react/jsx-indent-props": [
+            1,
+            "first"
         ]
     }
 }
+/*  */
