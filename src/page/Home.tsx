@@ -40,12 +40,11 @@ const Home = (props: HomeProps) => {
           }}
           _db={db}
           _setProfile={p => {
-            console.log(p)
             setProfile(p)
           }}
         />
       )}
-      {profile && (
+      {profile.length > 0 && (
         <FlatList
           data={profile}
           renderItem={({ item }) => (
@@ -65,7 +64,7 @@ const Home = (props: HomeProps) => {
           horizontal={true}
         />
       )}
-      {!profile && <Text>No profile</Text>}
+      {profile.length == 0 && <Text>No profile</Text>}
       <ButtonComponent
         onPress={() => {
           navigation.navigate('Add Profile')
@@ -96,7 +95,7 @@ const PopinDeleteUser = (props: {
   _id: number
   _callBack: () => void
   _db: SQLiteDatabase
-  _setProfile: Function
+  _setProfile: (profile: UserProfile[]) => void
 }) => {
   return (
     <Popin
@@ -108,7 +107,6 @@ const PopinDeleteUser = (props: {
           action: () => {
             try {
               deleteUserInfo(props._id, props._db).then(list => {
-                console.log(list, 'test')
                 if (list) {
                   props._setProfile(list)
                 }
@@ -123,7 +121,6 @@ const PopinDeleteUser = (props: {
         {
           label: 'Cancel',
           action: () => {
-            console.log('Cancel')
             props._callBack()
           },
           color: 'red',
@@ -134,14 +131,14 @@ const PopinDeleteUser = (props: {
 }
 /* Logique */
 async function deleteUserInfo(_id: number, _db: SQLiteDatabase): Promise<UserProfile[] | void> {
-  return new Promise((resolve, reject) => {
+  return new Promise((_resolve, _reject) => {
     _db.transaction(ty => {
       ty.executeSql(
         'DELETE FROM profile WHERE id =? ',
         [_id],
 
         () => {
-          console.log('USER PROFIL DELETE')
+          console.log('USER AND INFO USER DELETE')
         },
         error => {
           throw new Error(error.toString())
@@ -155,9 +152,7 @@ async function deleteUserInfo(_id: number, _db: SQLiteDatabase): Promise<UserPro
           [_id],
           () => {
             getAllProfile(_db).then((listProfile: UserProfile[]) => {
-              console.log('NEW LIST PROFILE')
-
-              resolve(listProfile)
+              _resolve(listProfile)
             })
           },
           error => {
@@ -166,27 +161,28 @@ async function deleteUserInfo(_id: number, _db: SQLiteDatabase): Promise<UserPro
         )
       })
     } catch (error) {
+      _reject(error)
       console.error(error)
     }
   })
 }
 
-async function getAllProfile(db: any): Promise<UserProfile[]> {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
+async function getAllProfile(_db: SQLiteDatabase): Promise<UserProfile[]> {
+  return new Promise((_resolve, _reject) => {
+    _db.transaction(_tx => {
+      _tx.executeSql(
         'SELECT * FROM profile',
         [],
-        (tx, results) => {
+        (_tx, _results) => {
           const profile: UserProfile[] = []
-          for (let index = 0; index < results.rows.length; index++) {
-            const element: UserProfile = results.rows.item(index)
+          for (let index = 0; index < _results.rows.length; index++) {
+            const element: UserProfile = _results.rows.item(index)
             profile.push(element)
           }
 
-          resolve(profile)
+          _resolve(profile)
         },
-        error => reject(error),
+        error => _reject(error),
       )
     })
   })
