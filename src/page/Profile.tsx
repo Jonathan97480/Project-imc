@@ -29,9 +29,28 @@ const Profile = (props: ProfileProps) => {
 
       <ButtonComponent
         onPress={() => {
-          navigation.navigate('IMC CALCUL')
+          navigation.navigate('IMC CALCUL', {
+            screen: 'Feed',
+            params: {
+              sort: 'latest',
+            },
+          })
         }}
         title="IMC CALCUL"
+        color="#00ff00"
+        incon="plus"
+      />
+
+      <ButtonComponent
+        onPress={() => {
+          navigation.navigate('Home', {
+            screen: 'Feed',
+            params: {
+              sort: 'latest',
+            },
+          })
+        }}
+        title="REVENIR A LA LIST DES PROFILE"
         color="#00ff00"
         incon="plus"
       />
@@ -40,24 +59,3 @@ const Profile = (props: ProfileProps) => {
 }
 
 export default Profile
-
-const ProfileDetails = props => {
-  const { route, navigation } = props
-  const profile: UserProfile = route.params.profile
-  return (
-    <View>
-      <ProfileComponent profile={profile} />
-      <View>
-        <Text>Taille</Text>
-        <Text>{profile.user_size}</Text>
-      </View>
-
-      <View>
-        <Text>Age</Text>
-        <Text>{profile.user_age}</Text>
-      </View>
-
-      <ButtonComponent onPress={() => { }} title="IMC CALCUL" color="#00ff00" incon="plus" />
-    </View>
-  )
-}
