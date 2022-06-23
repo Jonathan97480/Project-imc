@@ -114,6 +114,7 @@ const ImcCalcul = (props: ImcProps) => {
         <ButtonComponent
           title="Regarder vos state"
           onPress={() => {
+            setDetails(!details)
             navigation.navigate('STATE INFO')
           }}
           color="#00ff00"
