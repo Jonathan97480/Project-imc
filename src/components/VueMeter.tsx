@@ -2,8 +2,6 @@ import React from 'react'
 import { View, Dimensions, Easing, Text } from 'react-native'
 import {
   Canvas,
-  Circle,
-  Group,
   Skia,
   Path,
   Paint,
@@ -84,7 +82,7 @@ const VuMeterComponent = (props: DialProps) => {
             fontSize: 78,
             color: textGrey,
           }}>
-          {props.percent}
+          {props.percent * 100}
         </Text>
       </View>
     </View>
