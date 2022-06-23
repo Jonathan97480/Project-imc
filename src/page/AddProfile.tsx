@@ -229,7 +229,10 @@ const AddProfile = (props: HomeProps) => {
                         id: results.insertId,
                       })
                       setIsLoading(false)
-                      navigation.navigate('PROFILE')
+                      navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'PROFILE' }],
+                      })
                     },
                     error => {
                       throw new Error(error.toString())
@@ -249,9 +252,5 @@ const AddProfile = (props: HomeProps) => {
     )
   }
 }
-
-const PopinPhoto = () => { }
-
-const PopinAvatar = () => { }
 
 export default AddProfile
