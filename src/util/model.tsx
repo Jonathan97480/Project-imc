@@ -13,10 +13,9 @@ async function get(db, table, id) {
       `SELECT * FROM ${table} WHERE id=?`,
       [id],
       (tx, results) => {
-        console.log('Query success')
         return results.rows.item(0)
       },
-      error => console.log(error),
+      error => console.error(error),
     )
   })
 }
@@ -27,10 +26,9 @@ async function getAll(db, table) {
       `SELECT * FROM ${table}`,
       [],
       (tx, results) => {
-        console.log('Query success', results.rows.item(0))
         return results.rows
       },
-      error => console.log(error),
+      error => console.error(error),
     )
   })
 }
@@ -41,10 +39,9 @@ async function insert(db, table, data) {
   const keys = Object.keys(data)
   const sql = `INSERT INTO ${table} (${keys.join(',')}) VALUES (${values.join(',')})`
 
-  console.log(sql)
   db.transation(tx => {
     tx.executeSql(sql).then(results => {
-      console.log('Query success INSERT')
+      console.info('Query success INSERT')
       return results.rows.item(0)
     })
   })
@@ -58,10 +55,9 @@ async function update(db, table, data, id) {
         .join(',')} WHERE id =? `,
       Object.values(data).concat(id),
       (tx, results) => {
-        console.log('Query success')
         return results.rows.item(0)
       },
-      error => console.log(error),
+      error => console.error(error),
     )
   })
 }
@@ -72,10 +68,9 @@ async function deleteEnter(db, table, id) {
       `DELETE FROM ${table} WHERE id =? `,
       [id],
       (tx, results) => {
-        console.log('Query success')
         return results.rows.item(0)
       },
-      error => console.log(error),
+      error => console.error(error),
     )
   })
 }
@@ -86,10 +81,9 @@ async function deleteAll(db, table) {
       `DELETE FROM ${table} `,
       [],
       (tx, results) => {
-        console.log('Query success')
         return results.rows.item(0)
       },
-      error => console.log(error),
+      error => console.error(error),
     )
   })
 }
@@ -100,10 +94,9 @@ async function drop(db, table) {
       `DROP TABLE ${table} `,
       [],
       (tx, results) => {
-        console.log('Query success')
         return results.rows.item(0)
       },
-      error => console.log(error),
+      error => console.error(error),
     )
   })
 }

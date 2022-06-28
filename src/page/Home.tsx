@@ -31,7 +31,7 @@ const Home = (props: HomeProps) => {
   }
 
   return (
-    <View style={styles.contenaire}>
+    <View style={styles.container}>
       {showPopin && (
         <PopinDeleteUser
           _id={idUserDelete}
@@ -78,11 +78,11 @@ const Home = (props: HomeProps) => {
 }
 
 interface Styles {
-  contenaire: ViewStyle
+  container: ViewStyle
 }
 /* style */
 const styles = StyleSheet.create<Styles>({
-  contenaire: {
+  container: {
     padding: 10,
     height: '100%',
   },
@@ -138,7 +138,7 @@ async function deleteUserInfo(_id: number, _db: SQLiteDatabase): Promise<UserPro
         [_id],
 
         () => {
-          console.log('USER AND INFO USER DELETE')
+          console.info('USER AND INFO USER DELETE')
         },
         error => {
           throw new Error(error.toString())

@@ -10,7 +10,7 @@ interface ProfileComponentProps {
 
 const ProfileComponent = (props: ProfileComponentProps) => {
   const { profile, onLongPress } = props
-  console.log(profile, 'test profile')
+
   if (!profile) {
     return <View>No profile</View>
   }

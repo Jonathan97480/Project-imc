@@ -69,7 +69,7 @@ const AddProfile = (props: HomeProps) => {
                 },
               )
               if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log('Camera permission given')
+                console.info('Camera permission given')
                 launchCamera(
                   {
                     durationLimit: 10,
@@ -78,11 +78,11 @@ const AddProfile = (props: HomeProps) => {
                   },
                   response => {
                     if (response.didCancel) {
-                      console.log('User cancelled photo picker')
+                      console.info('User cancelled photo picker')
                     } else if (response.errorMessage) {
-                      console.log('ImagePicker Error: ', response.errorMessage)
+                      console.info('ImagePicker Error: ', response.errorMessage)
                     } else if (response.errorCode) {
-                      console.log('ImagePicker Error: ', response.errorCode)
+                      console.info('ImagePicker Error: ', response.errorCode)
                     } else {
                       setProfile({
                         ...profile,
@@ -92,7 +92,7 @@ const AddProfile = (props: HomeProps) => {
                   },
                 )
               } else {
-                console.log('Camera permission denied')
+                console.info('Camera permission denied')
               }
             } catch (err) {
               console.warn(err)
@@ -116,18 +116,18 @@ const AddProfile = (props: HomeProps) => {
                 },
               )
               if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log('Camera permission given')
+                console.info('Camera permission given')
                 launchImageLibrary(
                   {
                     mediaType: 'photo',
                   },
                   response => {
                     if (response.didCancel) {
-                      console.log('User cancelled photo picker')
+                      console.info('User cancelled photo picker')
                     } else if (response.errorMessage) {
-                      console.log('ImagePicker Error: ', response.errorMessage)
+                      console.info('ImagePicker Error: ', response.errorMessage)
                     } else if (response.errorCode) {
-                      console.log('ImagePicker Error: ', response.errorCode)
+                      console.info('ImagePicker Error: ', response.errorCode)
                     } else {
                       setProfile({
                         ...profile,
@@ -137,7 +137,7 @@ const AddProfile = (props: HomeProps) => {
                   },
                 )
               } else {
-                console.log('Camera permission denied')
+                console.info('Camera permission denied')
               }
             } catch (err) {
               console.warn(err)

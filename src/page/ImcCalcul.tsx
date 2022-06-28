@@ -45,7 +45,6 @@ const ImcCalcul = (props: ImcProps) => {
             setDetails(true)
           })
         } else {
-          console.log('salut les batard')
           setShowPopin({ active: true, idEntry: _result.user.id })
         }
       })
