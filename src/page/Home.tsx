@@ -1,10 +1,13 @@
-import { View, Text, FlatList, StyleSheet, ViewStyle } from 'react-native'
+import { View, Text, FlatList, StyleSheet, ViewStyle, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { ProfileComponent, ButtonComponent } from '../components/'
+import { ButtonComponent, DragLeftBtn } from '../components/'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
 import { UserProfile } from '../interfaces'
 import { Popin } from '../components'
-
+import { ScrollView } from 'react-native-gesture-handler'
+import { useNavigation } from '@react-navigation/native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import globalStyles from '../styles/global'
 interface HomeProps {
   db: SQLiteDatabase
   navigation: any
@@ -30,105 +33,133 @@ const Home = (props: HomeProps) => {
     return <Text>Loading...</Text>
   }
 
-  return (
-    <View style={styles.container}>
-      {showPopin && (
-        <PopinDeleteUser
-          _id={idUserDelete}
-          _callBack={() => {
-            setShowPopin(false)
-          }}
-          _db={db}
-          _setProfile={p => {
-            setProfile(p)
-          }}
-        />
-      )}
-      {profile.length > 0 && (
-        <FlatList
-          data={profile}
-          renderItem={({ item }) => (
-            <ProfileComponent
-              profile={item}
-              onPress={() => {
-                handleProfile(item)
-                navigation.navigate('PROFILE')
-              }}
-              onLongPress={() => {
-                setidUserDelete(item.id)
-                setShowPopin(true)
-              }}
-            />
-          )}
-          keyExtractor={item => item.id.toString()}
-          horizontal={true}
-        />
-      )}
-      {profile.length == 0 && <Text>No profile</Text>}
-      <ButtonComponent
-        onPress={() => {
-          navigation.navigate('Add Profile')
-        }}
-        title="Ajoutée un profile"
-        color="#00ff00"
-        incon="plus"
-      />
-    </View>
-  )
+  if (profile.length > 0) {
+    return <CurentScreen _db={db} _setProfile={setProfile} profile={profile} />
+  }
+  return <FirstScreen navigation={navigation} />
 }
-
-interface Styles {
-  container: ViewStyle
-}
-/* style */
-const styles = StyleSheet.create<Styles>({
-  container: {
-    padding: 10,
-    height: '100%',
-  },
-})
 
 export default Home
 
-/* Components */
-const PopinDeleteUser = (props: {
-  _id: number
-  _callBack: () => void
+interface CurentScreenProps {
+  profile: UserProfile[]
   _db: SQLiteDatabase
-  _setProfile: (profile: UserProfile[]) => void
-}) => {
+  _setProfile: (p: UserProfile[]) => void
+}
+
+const CurentScreen = (props: CurentScreenProps) => {
   return (
-    <Popin
-      title="Supprimer votre compte"
-      message="voulez-vous supprimer votre compte"
-      buttons={[
-        {
-          label: 'ok',
-          action: () => {
-            try {
-              deleteUserInfo(props._id, props._db).then(list => {
-                if (list) {
-                  props._setProfile(list)
+    <SafeAreaView style={globalStyles.safeArea}>
+      <View>
+        <Text
+          style={[
+            globalStyles.gap40,
+            globalStyles.textBold,
+            globalStyles.textCenter,
+            globalStyles.textColorPrimary,
+            globalStyles.textBold,
+            globalStyles.textSize24,
+          ]}>
+          Heureux de vous revoir :)
+        </Text>
+        <Text
+          style={[
+            globalStyles.gap40,
+            globalStyles.textLight,
+            globalStyles.textColorPrimary,
+            globalStyles.textCenter,
+            globalStyles.textSize16,
+          ]}>
+          Veuillez choisir votre profil pour continuer
+        </Text>
+
+        <ScrollView style={globalStyles.gap20}>
+          {props.profile.map(profile => (
+            <DragLeftBtn
+              key={profile.id}
+              profile={profile}
+              onDrag={() => {
+                try {
+                  deleteUserInfo(profile.id, props._db).then(list => {
+                    if (list) {
+                      props._setProfile(list)
+                    }
+                  })
+                } catch (error) {
+                  console.error(error)
                 }
-              })
-              props._callBack()
-            } catch (error) {
-              console.error(error)
-            }
-          },
-          color: 'green',
-        },
-        {
-          label: 'Cancel',
-          action: () => {
-            props._callBack()
-          },
-          color: 'red',
-        },
-      ]}
-    />
+              }}
+            />
+          ))}
+        </ScrollView>
+        <View>
+          <Pressable>
+            <Text
+              style={[
+                globalStyles.textColorPrimary,
+                globalStyles.textCenter,
+                globalStyles.textSize16,
+                globalStyles.textLight,
+                { textDecorationLine: 'underline' },
+              ]}>
+              A propos
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+    </SafeAreaView>
   )
 }
+
+interface FirstScreenProps {
+  navigation: any
+}
+const FirstScreen = (props: FirstScreenProps) => {
+  return (
+    <SafeAreaView style={globalStyles.safeArea}>
+      <View style={globalStyles.container}>
+        <Text
+          style={[
+            globalStyles.gap40,
+            globalStyles.textBold,
+            globalStyles.textCenter,
+            globalStyles.textColorPrimary,
+            globalStyles.textBold,
+            globalStyles.textSize24,
+          ]}>
+          Bonjour:)
+        </Text>
+        <Text
+          style={[
+            globalStyles.gap40,
+            globalStyles.textLight,
+            globalStyles.textColorPrimary,
+            globalStyles.textCenter,
+            globalStyles.textSize16,
+          ]}>
+          Bienvenue sur l’application IMC afin de continuer veuillez crée votre profil.{' '}
+        </Text>
+        <ButtonComponent
+          style={globalStyles.ButtonStyle}
+          onPress={() => {
+            console.log('add profile')
+            props.navigation.navigate('Add Profile')
+          }}>
+          <Text
+            style={[
+              globalStyles.textColorPrimary,
+              globalStyles.textMedium,
+              globalStyles.textCenter,
+              globalStyles.textSize16,
+            ]}>
+            Crée profil
+          </Text>
+        </ButtonComponent>
+      </View>
+    </SafeAreaView>
+  )
+}
+
 /* Logique */
 async function deleteUserInfo(_id: number, _db: SQLiteDatabase): Promise<UserProfile[] | void> {
   return new Promise((_resolve, _reject) => {

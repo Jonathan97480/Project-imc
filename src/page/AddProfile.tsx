@@ -38,125 +38,18 @@ const AddProfile = (props: HomeProps) => {
               ...profile,
               user_sexe: 'Femme',
             })
-          }}
-          title="Femme"
-          color="pink"
-          incon="venus"
-        />
+          }}>
+          <Text>Femme</Text>
+        </ButtonComponent>
         <ButtonComponent
           onPress={() => {
             setProfile({
               ...profile,
               user_sexe: 'Homme',
             })
-          }}
-          title="Homme"
-          color="blue"
-          incon="mars"
-        />
-        <Text>Ajouter une photo </Text>
-        <ButtonComponent
-          onPress={async () => {
-            try {
-              const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.CAMERA,
-                {
-                  title: 'App Camera Permission',
-                  message: 'App needs access to your camera ',
-                  buttonNeutral: 'Ask Me Later',
-                  buttonNegative: 'Cancel',
-                  buttonPositive: 'OK',
-                },
-              )
-              if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.info('Camera permission given')
-                launchCamera(
-                  {
-                    durationLimit: 10,
-                    saveToPhotos: true,
-                    mediaType: 'photo',
-                  },
-                  response => {
-                    if (response.didCancel) {
-                      console.info('User cancelled photo picker')
-                    } else if (response.errorMessage) {
-                      console.info('ImagePicker Error: ', response.errorMessage)
-                    } else if (response.errorCode) {
-                      console.info('ImagePicker Error: ', response.errorCode)
-                    } else {
-                      setProfile({
-                        ...profile,
-                        user_avatar: response.assets ? response.assets[0].uri : '',
-                      })
-                    }
-                  },
-                )
-              } else {
-                console.info('Camera permission denied')
-              }
-            } catch (err) {
-              console.warn(err)
-            }
-          }}
-          title="Ajouter une photo"
-          color="green"
-          incon="camera"
-        />
-        <ButtonComponent
-          onPress={async () => {
-            try {
-              const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-                {
-                  title: 'App Camera Permission',
-                  message: 'App needs access to your camera ',
-                  buttonNeutral: 'Ask Me Later',
-                  buttonNegative: 'Cancel',
-                  buttonPositive: 'OK',
-                },
-              )
-              if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.info('Camera permission given')
-                launchImageLibrary(
-                  {
-                    mediaType: 'photo',
-                  },
-                  response => {
-                    if (response.didCancel) {
-                      console.info('User cancelled photo picker')
-                    } else if (response.errorMessage) {
-                      console.info('ImagePicker Error: ', response.errorMessage)
-                    } else if (response.errorCode) {
-                      console.info('ImagePicker Error: ', response.errorCode)
-                    } else {
-                      setProfile({
-                        ...profile,
-                        user_avatar: response.assets ? response.assets[0].uri : '',
-                      })
-                    }
-                  },
-                )
-              } else {
-                console.info('Camera permission denied')
-              }
-            } catch (err) {
-              console.warn(err)
-            }
-          }}
-          title="Rechercher dans votre mobile"
-          color="red"
-          incon="image"
-        />
-        <Text>Ajouter un nom</Text>
-        <TextInput
-          placeholder="Nom"
-          onChangeText={text => {
-            setProfile({
-              ...profile,
-              user_name: text,
-            })
-          }}
-        />
+          }}>
+          <Text>Homme</Text>
+        </ButtonComponent>
 
         <ButtonComponent
           onPress={() => {
@@ -169,11 +62,9 @@ const AddProfile = (props: HomeProps) => {
             } else {
               alert('Veuillez entrer un nom')
             }
-          }}
-          title="Suivant"
-          color="black"
-          incon="image"
-        />
+          }}>
+          <Text>Suivant</Text>
+        </ButtonComponent>
       </View>
     )
   } else {
@@ -243,14 +134,113 @@ const AddProfile = (props: HomeProps) => {
                 console.warn(err)
               }
             }
-          }}
-          title="Suivant"
-          color="black"
-          incon="image"
-        />
+          }}>
+          <Text>suivant</Text>
+        </ButtonComponent>
       </View>
     )
   }
 }
 
 export default AddProfile
+
+/* 
+ <Text>Ajouter une photo </Text>
+        <ButtonComponent
+          onPress={async () => {
+            try {
+              const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.CAMERA,
+                {
+                  title: 'App Camera Permission',
+                  message: 'App needs access to your camera ',
+                  buttonNeutral: 'Ask Me Later',
+                  buttonNegative: 'Cancel',
+                  buttonPositive: 'OK',
+                },
+              )
+              if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.info('Camera permission given')
+                launchCamera(
+                  {
+                    durationLimit: 10,
+                    saveToPhotos: true,
+                    mediaType: 'photo',
+                  },
+                  response => {
+                    if (response.didCancel) {
+                      console.info('User cancelled photo picker')
+                    } else if (response.errorMessage) {
+                      console.info('ImagePicker Error: ', response.errorMessage)
+                    } else if (response.errorCode) {
+                      console.info('ImagePicker Error: ', response.errorCode)
+                    } else {
+                      setProfile({
+                        ...profile,
+                        user_avatar: response.assets ? response.assets[0].uri : '',
+                      })
+                    }
+                  },
+                )
+              } else {
+                console.info('Camera permission denied')
+              }
+            } catch (err) {
+              console.warn(err)
+            }
+          }}>
+          <Text>Camera</Text>
+        </ButtonComponent>
+        <ButtonComponent
+          onPress={async () => {
+            try {
+              const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                {
+                  title: 'App Camera Permission',
+                  message: 'App needs access to your camera ',
+                  buttonNeutral: 'Ask Me Later',
+                  buttonNegative: 'Cancel',
+                  buttonPositive: 'OK',
+                },
+              )
+              if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.info('Camera permission given')
+                launchImageLibrary(
+                  {
+                    mediaType: 'photo',
+                  },
+                  response => {
+                    if (response.didCancel) {
+                      console.info('User cancelled photo picker')
+                    } else if (response.errorMessage) {
+                      console.info('ImagePicker Error: ', response.errorMessage)
+                    } else if (response.errorCode) {
+                      console.info('ImagePicker Error: ', response.errorCode)
+                    } else {
+                      setProfile({
+                        ...profile,
+                        user_avatar: response.assets ? response.assets[0].uri : '',
+                      })
+                    }
+                  },
+                )
+              } else {
+                console.info('Camera permission denied')
+              }
+            } catch (err) {
+              console.warn(err)
+            }
+          }}>
+          <Text>Galerie</Text>
+        </ButtonComponent>
+        <Text>Ajouter un nom</Text>
+        <TextInput
+          placeholder="Nom"
+          onChangeText={text => {
+            setProfile({
+              ...profile,
+              user_name: text,
+            })
+          }}
+        /> */

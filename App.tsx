@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { ResultSet, SQLiteDatabase } from 'react-native-sqlite-storage'
 import { UserProfile } from './src/interfaces'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 let db: SQLiteDatabase
 
@@ -29,19 +30,23 @@ const App = () => {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home">
-          {props => <Home {...props} db={db} handleProfile={handleProfile} />}
-        </Stack.Screen>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" options={{ headerShown: false }}>
+            {props => <Home {...props} db={db} handleProfile={handleProfile} />}
+          </Stack.Screen>
 
-        <Stack.Screen name="Add Profile">
-          {props => <AddProfile {...props} db={db} handleProfile={handleProfile} />}
-        </Stack.Screen>
+          <Stack.Screen name="Add Profile" options={{ headerShown: false }}>
+            {props => <AddProfile {...props} db={db} handleProfile={handleProfile} />}
+          </Stack.Screen>
 
-        <Stack.Screen name="PROFILE">{props => <HomeTabs {...props} db={db} />}</Stack.Screen>
-      </Stack.Navigator>
-    </NavigationContainer>
+          <Stack.Screen options={{ headerShown: false }} name="PROFILE">
+            {props => <HomeTabs {...props} db={db} />}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   )
 }
 
