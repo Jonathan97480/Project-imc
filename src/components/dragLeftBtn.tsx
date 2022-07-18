@@ -1,10 +1,21 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import { View, ViewStyle, ImageStyle, StyleSheet, Dimensions, Image, Text } from 'react-native'
+import {
+  View,
+  ViewStyle,
+  ImageStyle,
+  StyleSheet,
+  Dimensions,
+  Image,
+  Text,
+  Alert,
+} from 'react-native'
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
   PanGestureHandlerProps,
+  GestureDetector,
+  Gesture,
 } from 'react-native-gesture-handler'
 import Animated, {
   runOnJS,
@@ -20,9 +31,17 @@ const TRANSLATE_X_THRESHOLD = -SCREEN_WIDTH * 0.3
 interface DragLeftBtnprops extends Pick<PanGestureHandlerProps, 'simultaneousHandlers'> {
   profile: UserProfile
   onDrag: () => void
+  onTap?: () => void
 }
 
 const DragLeftBtn = (props: DragLeftBtnprops) => {
+  const singleTap = Gesture.Tap()
+  singleTap.maxDuration(1000)
+  singleTap.onStart(() => {
+    if (props.onTap) {
+      props.onTap()
+    }
+  })
   const translateX = useSharedValue(0)
   const panGesture = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
     onActive: event => {
@@ -51,38 +70,40 @@ const DragLeftBtn = (props: DragLeftBtnprops) => {
   }))
   return (
     <View style={[styles.container, globalStyles.gap20]}>
-      <PanGestureHandler
-        simultaneousHandlers={props.simultaneousHandlers}
-        onGestureEvent={panGesture}>
-        <Animated.View style={[rStyle, styles.content]}>
-          {props.profile.user_avatar === '' ? (
-            <Image
-              style={styles.avatar}
-              source={
-                props.profile.user_sexe === 'Femme'
-                  ? require('../assets/img/avatar_femme.png')
-                  : require('../assets/img/avatar_homme.png')
-              }
-            />
-          ) : (
-            <Image
-              source={{
-                uri: props.profile.user_avatar,
-              }}
-              style={styles.avatar}
-            />
-          )}
-          <Text
-            style={[
-              globalStyles.textColorPrimary,
-              globalStyles.textSize16,
-              globalStyles.textMedium,
-              { textTransform: 'capitalize' },
-            ]}>
-            {props.profile.user_name}
-          </Text>
-        </Animated.View>
-      </PanGestureHandler>
+      <GestureDetector gesture={Gesture.Exclusive(singleTap)}>
+        <PanGestureHandler
+          simultaneousHandlers={props.simultaneousHandlers}
+          onGestureEvent={panGesture}>
+          <Animated.View style={[rStyle, styles.content]}>
+            {props.profile.user_avatar === '' ? (
+              <Image
+                style={styles.avatar}
+                source={
+                  props.profile.user_sexe === 'Femme'
+                    ? require('../assets/img/avatar_femme.png')
+                    : require('../assets/img/avatar_homme.png')
+                }
+              />
+            ) : (
+              <Image
+                source={{
+                  uri: props.profile.user_avatar,
+                }}
+                style={styles.avatar}
+              />
+            )}
+            <Text
+              style={[
+                globalStyles.textColorPrimary,
+                globalStyles.textSize16,
+                globalStyles.textMedium,
+                { textTransform: 'capitalize' },
+              ]}>
+              {props.profile.user_name}
+            </Text>
+          </Animated.View>
+        </PanGestureHandler>
+      </GestureDetector>
     </View>
   )
 }

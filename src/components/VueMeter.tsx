@@ -43,7 +43,12 @@ const VuMeterComponent = (props: DialProps) => {
   )
 
   return (
-    <View style={{ margin: padding, height: viewWidth, width: viewWidth }}>
+    <View
+      style={{
+        margin: padding,
+        height: viewWidth / 1.5,
+        width: viewWidth,
+      }}>
       <Canvas style={{ width: viewWidth, height: viewWidth }}>
         <Path path={path} color="transparent">
           <Paint style="stroke" strokeWidth={strokeWidth} strokeCap="round" color={'lightGrey'} />
@@ -67,12 +72,15 @@ const VuMeterComponent = (props: DialProps) => {
           right: 0,
           bottom: viewWidth * 0.2,
           margin: padding + strokeWidth * 2,
+
+          height: viewWidth / 2.5,
         }}>
         <Text
           style={{
             textAlign: 'center',
-            fontSize: 22,
-            color: textPurple,
+            fontSize: 36,
+            fontWeight: 'bold',
+            color: '#fff',
           }}>
           IMC
         </Text>
@@ -80,7 +88,7 @@ const VuMeterComponent = (props: DialProps) => {
           style={{
             textAlign: 'center',
             fontSize: 78,
-            color: textGrey,
+            color: '#fff',
           }}>
           {props.percent * 100}
         </Text>

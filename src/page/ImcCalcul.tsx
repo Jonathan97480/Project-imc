@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import { View, Text, Image, Pressable, TextInput, TextInputChangeEventData } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
-import { ButtonComponent, Popin, VuMeterComponent } from '../components/'
+import { Row } from 'react-native-table-component'
+import { ButtonComponent, Popin, PopinCalculImc, VuMeterComponent } from '../components/'
 import { UserProfile } from '../interfaces'
+import globalStyles from '../styles/global'
 
 interface ImcProps {
   profile: UserProfile | null
@@ -19,7 +22,6 @@ const ImcCalcul = (props: ImcProps) => {
   const { navigation, profile, db } = props
   const [imc, setImc] = React.useState(0)
   const [poids, setPoids] = React.useState(0)
-  const [details, setDetails] = React.useState(false)
   const [showPopin, setShowPopin] = useState({ active: false, idEntry: 0 })
 
   const handlePoids = (event: any) => {
@@ -32,17 +34,12 @@ const ImcCalcul = (props: ImcProps) => {
 
   const handleImc = () => {
     if (profile?.user_size != undefined && poids != 0) {
-      const value1: number = profile?.user_size * 2
-      let result: number = poids / value1
-
-      result = Math.round(result * 100) / 100
-      result = parseInt(result.toString().split('.')[1])
-      setImc(result)
+      /* Check user is value exit for today */
       checkEnterExistFordate(db, profile.id).then(_result => {
         if (!_result.user) {
+          calculImc(profile, poids, setImc)
           insertImc(profile, poids, imc, db).then(() => {
             setPoids(0)
-            setDetails(true)
           })
         } else {
           setShowPopin({ active: true, idEntry: _result.user.id })
@@ -53,75 +50,104 @@ const ImcCalcul = (props: ImcProps) => {
     }
   }
 
-  if (!details) {
-    return (
-      <View>
+  return (
+    <SafeAreaView style={globalStyles.safeArea}>
+      <View style={globalStyles.container}>
+        <Text
+          style={[
+            globalStyles.textColorPrimary,
+            globalStyles.textSize24,
+            globalStyles.textBold,
+            globalStyles.textCenter,
+          ]}>
+          Calculer votre imc
+        </Text>
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <VuMeterComponent percent={imc / 100} />
+        </View>
+
         {showPopin.active && (
-          <Popin
-            title=""
-            message="Vous avez déjà renseigné un poids pour aujourd ' hui"
-            buttons={[
-              {
-                label: 'Remploacer la valeur',
-                action: () => {
-                  updateImc(showPopin.idEntry, poids, imc, db)
-                    .then(() => {
-                      setPoids(0)
-                      setDetails(true)
-                      setShowPopin({ active: false, idEntry: 0 })
-                    })
-                    .catch(error => {
-                      throw new Error(error)
-                    })
-                },
-                color: 'green',
-              },
-              {
-                label: 'Cancel',
-                action: () => {
+          <PopinCalculImc
+            onCancel={() => {
+              setShowPopin({ active: false, idEntry: 0 })
+            }}
+            onValidate={() => {
+              updateImc(showPopin.idEntry, poids, imc, db)
+                .then(() => {
+                  if (profile) {
+                    calculImc(profile, poids, setImc)
+                  }
+                  setPoids(0)
+
                   setShowPopin({ active: false, idEntry: 0 })
-                },
-                color: 'red',
-              },
-            ]}
+                })
+                .catch(error => {
+                  throw new Error(error)
+                })
+            }}
           />
         )}
-        <Text>IMC CALCUL</Text>
-        <TextInput
-          placeholder="Poids"
-          keyboardType="numeric"
-          onChange={e => handlePoids(e)}
-          value={poids.toString()}
-        />
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            marginBottom: 40,
+          }}>
+          <Text
+            style={[
+              {
+                marginRight: 35,
+              },
+              globalStyles.textColorPrimary,
+              globalStyles.textSize16,
+              globalStyles.textLight,
+            ]}>
+            Votre poids
+          </Text>
+          <TextInput
+            style={[
+              { backgroundColor: '#191E34', width: 50, height: 43, marginRight: 10 },
+              globalStyles.textColorPrimary,
+              globalStyles.textSize16,
+              globalStyles.textBold,
+              globalStyles.textCenter,
+            ]}
+            placeholder="Poids"
+            keyboardType="numeric"
+            onChange={e => handlePoids(e)}
+            value={poids.toString()}
+          />
+          <Text
+            style={[
+              globalStyles.textColorPrimary,
+              globalStyles.textSize16,
+              globalStyles.textBold,
+              globalStyles.textCenter,
+            ]}>
+            Kg
+          </Text>
+        </View>
+
         <ButtonComponent
-          title="Calculer"
+          style={globalStyles.ButtonStyle}
           onPress={() => {
             handleImc()
-          }}
-          color="#00ff00"
-          incon="plus"
-        />
+          }}>
+          <Text
+            style={[
+              globalStyles.textColorPrimary,
+              globalStyles.textSize16,
+              globalStyles.textBold,
+              globalStyles.textCenter,
+            ]}>
+            Calculer
+          </Text>
+        </ButtonComponent>
       </View>
-    )
-  } else {
-    return (
-      <View>
-        <Text>IMC CALCUL</Text>
-
-        <Text>{imc}</Text>
-        <VuMeterComponent percent={imc / 100} />
-        <ButtonComponent
-          title="Regarder vos state"
-          onPress={() => {
-            setDetails(!details)
-            navigation.navigate('STATE INFO')
-          }}
-          color="#00ff00"
-          incon="plus"
-        />
-      </View>
-    )
-  }
+    </SafeAreaView>
+  )
 }
 
 export default ImcCalcul
@@ -203,4 +229,13 @@ const checkEnterExistFordate = async (
       )
     })
   })
+}
+
+const calculImc = (profile: UserProfile, poids: number, setImc: (val) => void) => {
+  const value1: number = profile?.user_size * 2
+  let result: number = poids / value1
+
+  result = Math.round(result * 100) / 100
+  result = parseInt(result.toString().split('.')[1])
+  setImc(result)
 }

@@ -62,6 +62,23 @@ const globalStyles = StyleSheet.create({
   textSize24: {
     fontSize: 24,
   },
+  blockInput: {
+    width: '100%',
+    height: 'auto',
+    flexDirection: 'column',
+  },
+  blockInputLabel: {
+    color: '#fff',
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  blockInputInput: {
+    backgroundColor: '#191E34',
+    width: '100%',
+    height: 38,
+    fontSize: 16,
+    borderRadius: 5,
+  },
 })
 
 export default globalStyles

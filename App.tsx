@@ -7,7 +7,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { ResultSet, SQLiteDatabase } from 'react-native-sqlite-storage'
 import { UserProfile } from './src/interfaces'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-
+import Icon from 'react-native-vector-icons/FontAwesome'
 let db: SQLiteDatabase
 
 dbInit().then(_db => {
@@ -38,7 +38,14 @@ const App = () => {
           </Stack.Screen>
 
           <Stack.Screen name="Add Profile" options={{ headerShown: false }}>
-            {props => <AddProfile {...props} db={db} handleProfile={handleProfile} />}
+            {props => (
+              <AddProfile
+                {...props}
+                db={db}
+                handleProfile={handleProfile}
+                curentProfile={curentUser}
+              />
+            )}
           </Stack.Screen>
 
           <Stack.Screen options={{ headerShown: false }} name="PROFILE">
@@ -53,13 +60,34 @@ const App = () => {
 function HomeTabs(props) {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="profile">
+      <Tab.Screen
+        name="profile"
+        options={{
+          headerShown: false,
+          tabBarInactiveBackgroundColor: '#191E34',
+          tabBarActiveBackgroundColor: '#1E1E1E',
+          tabBarIcon: ({ color }) => <Icon name="user" size={20} color="#fff" />,
+        }}>
         {props => <Profile {...props} db={db} profile={curentUser} />}
       </Tab.Screen>
-      <Tab.Screen name="IMC CALCUL">
+      <Tab.Screen
+        name="IMC CALCUL"
+        options={{
+          headerShown: false,
+          tabBarInactiveBackgroundColor: '#191E34',
+          tabBarActiveBackgroundColor: '#1E1E1E',
+          tabBarIcon: ({ color }) => <Icon name="calculator" size={20} color="#fff" />,
+        }}>
         {props => <ImcCalcul {...props} db={db} profile={curentUser} />}
       </Tab.Screen>
-      <Tab.Screen name="STATE INFO">
+      <Tab.Screen
+        name="STATE INFO"
+        options={{
+          headerShown: false,
+          tabBarInactiveBackgroundColor: '#191E34',
+          tabBarActiveBackgroundColor: '#1E1E1E',
+          tabBarIcon: ({ color }) => <Icon name="bar-chart" size={20} color="#fff" />,
+        }}>
         {props => <StateInfo {...props} db={db} profile={curentUser} />}
       </Tab.Screen>
     </Tab.Navigator>

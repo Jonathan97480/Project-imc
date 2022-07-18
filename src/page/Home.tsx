@@ -34,7 +34,15 @@ const Home = (props: HomeProps) => {
   }
 
   if (profile.length > 0) {
-    return <CurentScreen _db={db} _setProfile={setProfile} profile={profile} />
+    return (
+      <CurentScreen
+        _db={db}
+        _setProfile={setProfile}
+        profile={profile}
+        handleProfile={handleProfile}
+        navigation={navigation}
+      />
+    )
   }
   return <FirstScreen navigation={navigation} />
 }
@@ -45,6 +53,8 @@ interface CurentScreenProps {
   profile: UserProfile[]
   _db: SQLiteDatabase
   _setProfile: (p: UserProfile[]) => void
+  navigation: any
+  handleProfile: (profile: UserProfile) => void
 }
 
 const CurentScreen = (props: CurentScreenProps) => {
@@ -76,6 +86,10 @@ const CurentScreen = (props: CurentScreenProps) => {
         <ScrollView style={globalStyles.gap20}>
           {props.profile.map(profile => (
             <DragLeftBtn
+              onTap={() => {
+                props.handleProfile(profile)
+                props.navigation.navigate('PROFILE')
+              }}
               key={profile.id}
               profile={profile}
               onDrag={() => {
