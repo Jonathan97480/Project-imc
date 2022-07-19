@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/indent */
 import { Home, AddProfile, Profile, ImcCalcul, StateInfo } from './src/page'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { dbInit, createTable } from './src/util/model'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { ResultSet, SQLiteDatabase } from 'react-native-sqlite-storage'
-import { UserProfile } from './src/interfaces'
+import { ImcTable, UserProfile } from './src/interfaces'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/FontAwesome'
 let db: SQLiteDatabase
@@ -20,6 +21,19 @@ const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
 
 const App = () => {
+  const [historique, setHistorique] = useState<
+    { date: string | Date; poids: number; imc: number }[] | null
+  >(null)
+  const updateHistorique = (profile: UserProfile) => {
+    getHistoriqueUser(profile)
+      .then(historique => {
+        setHistorique(historique)
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
+
   useEffect(() => {
     createProfileDataBase(db)
     createImcDataBase(db)
@@ -27,6 +41,7 @@ const App = () => {
 
   const handleProfile = (profile: UserProfile) => {
     curentUser = profile
+    updateHistorique(profile)
   }
 
   return (
@@ -49,7 +64,14 @@ const App = () => {
           </Stack.Screen>
 
           <Stack.Screen options={{ headerShown: false }} name="PROFILE">
-            {props => <HomeTabs {...props} db={db} />}
+            {props => (
+              <HomeTabs
+                {...props}
+                db={db}
+                updateHistorique={updateHistorique}
+                historique={historique}
+              />
+            )}
           </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
@@ -57,7 +79,14 @@ const App = () => {
   )
 }
 
-function HomeTabs(props) {
+interface HomeTabsProps {
+  db: SQLiteDatabase
+  updateHistorique: (profile: UserProfile) => void
+  historique: { date: string | Date; poids: number; imc: number }[] | null
+}
+
+function HomeTabs(props: HomeTabsProps) {
+  const { db, updateHistorique, historique } = props
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -68,7 +97,9 @@ function HomeTabs(props) {
           tabBarActiveBackgroundColor: '#1E1E1E',
           tabBarIcon: ({ color }) => <Icon name="user" size={20} color="#fff" />,
         }}>
-        {props => <Profile {...props} db={db} profile={curentUser} />}
+        {props => (
+          <Profile db={db} profile={curentUser} {...props} updateHistorique={updateHistorique} />
+        )}
       </Tab.Screen>
       <Tab.Screen
         name="IMC CALCUL"
@@ -78,7 +109,7 @@ function HomeTabs(props) {
           tabBarActiveBackgroundColor: '#1E1E1E',
           tabBarIcon: ({ color }) => <Icon name="calculator" size={20} color="#fff" />,
         }}>
-        {props => <ImcCalcul {...props} db={db} profile={curentUser} />}
+        {props => <ImcCalcul db={db} profile={curentUser} updateHistorique={updateHistorique} />}
       </Tab.Screen>
       <Tab.Screen
         name="STATE INFO"
@@ -88,7 +119,15 @@ function HomeTabs(props) {
           tabBarActiveBackgroundColor: '#1E1E1E',
           tabBarIcon: ({ color }) => <Icon name="bar-chart" size={20} color="#fff" />,
         }}>
-        {props => <StateInfo {...props} db={db} profile={curentUser} />}
+        {props => (
+          <StateInfo
+            {...props}
+            db={db}
+            profile={curentUser}
+            updateHistorique={updateHistorique}
+            historique={historique}
+          />
+        )}
       </Tab.Screen>
     </Tab.Navigator>
   )
@@ -144,6 +183,34 @@ function createImcDataBase(db: SQLiteDatabase) {
   } catch (error) {
     console.error(error)
   }
+}
+
+async function getHistoriqueUser(
+  profile: UserProfile,
+): Promise<{ date: string | Date; poids: number; imc: number }[]> {
+  return new Promise<{ date: string | Date; poids: number; imc: number }[]>((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM imc WHERE user_id=?',
+        [profile?.id],
+        (tx, results) => {
+          console.log(results, 'result imc table')
+          const len = results.rows.length
+          const list: { date: string | Date; poids: number; imc: number }[] = []
+
+          for (let i = 0; i < len; i++) {
+            const ligne: ImcTable = results.rows.item(i)
+            list.push({ date: ligne.imc_date, poids: ligne.user_poids, imc: ligne.user_imc })
+          }
+
+          resolve(list)
+        },
+        error => {
+          reject(error)
+        },
+      )
+    })
+  })
 }
 
 export default App

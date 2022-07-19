@@ -79,6 +79,31 @@ const globalStyles = StyleSheet.create({
     fontSize: 16,
     borderRadius: 5,
   },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+  },
+  paragraphe: {
+    fontSize: 16,
+    color: '#fff',
+    textAlign: 'center',
+  },
+  btnSmall: {
+    width: 85,
+    height: 36,
+    backgroundColor: '#191E34',
+    borderRadius: 5,
+    elevation: 5,
+    padding: 9,
+  },
+  btnText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
 })
 
 export default globalStyles

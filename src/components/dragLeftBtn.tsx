@@ -1,15 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import {
-  View,
-  ViewStyle,
-  ImageStyle,
-  StyleSheet,
-  Dimensions,
-  Image,
-  Text,
-  Alert,
-} from 'react-native'
+import { View, ViewStyle, ImageStyle, StyleSheet, Dimensions, Image, Text } from 'react-native'
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -45,7 +36,6 @@ const DragLeftBtn = (props: DragLeftBtnprops) => {
   const translateX = useSharedValue(0)
   const panGesture = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
     onActive: event => {
-      console.log('onStart', event.translationX)
       translateX.value = event.translationX
     },
     onEnd: () => {

@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
-import { View, Text, Image, Pressable, TextInput, TextInputChangeEventData } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, Text, TextInput } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
-import { Row } from 'react-native-table-component'
-import { ButtonComponent, Popin, PopinCalculImc, VuMeterComponent } from '../components/'
+import { ButtonComponent, PopinCalculImc, VuMeterComponent } from '../components/'
 import { UserProfile } from '../interfaces'
 import globalStyles from '../styles/global'
 
 interface ImcProps {
   profile: UserProfile | null
-  navigation: any
+
   db: SQLiteDatabase
+  updateHistorique: (val) => void
 }
 
 const date = {
@@ -19,7 +19,7 @@ const date = {
   year: new Date().getFullYear(),
 }
 const ImcCalcul = (props: ImcProps) => {
-  const { navigation, profile, db } = props
+  const { profile, db } = props
   const [imc, setImc] = React.useState(0)
   const [poids, setPoids] = React.useState(0)
   const [showPopin, setShowPopin] = useState({ active: false, idEntry: 0 })
@@ -37,9 +37,11 @@ const ImcCalcul = (props: ImcProps) => {
       /* Check user is value exit for today */
       checkEnterExistFordate(db, profile.id).then(_result => {
         if (!_result.user) {
-          calculImc(profile, poids, setImc)
-          insertImc(profile, poids, imc, db).then(() => {
+          const newImc = calculImc(profile, poids)
+          insertImc(profile, poids, newImc, db).then(() => {
             setPoids(0)
+            setImc(newImc)
+            props.updateHistorique(profile)
           })
         } else {
           setShowPopin({ active: true, idEntry: _result.user.id })
@@ -72,18 +74,20 @@ const ImcCalcul = (props: ImcProps) => {
               setShowPopin({ active: false, idEntry: 0 })
             }}
             onValidate={() => {
-              updateImc(showPopin.idEntry, poids, imc, db)
-                .then(() => {
-                  if (profile) {
-                    calculImc(profile, poids, setImc)
-                  }
-                  setPoids(0)
+              if (profile) {
+                const newImc = calculImc(profile, poids)
 
-                  setShowPopin({ active: false, idEntry: 0 })
-                })
-                .catch(error => {
-                  throw new Error(error)
-                })
+                updateImc(showPopin.idEntry, poids, newImc, db)
+                  .then(() => {
+                    setPoids(0)
+                    setImc(newImc)
+                    setShowPopin({ active: false, idEntry: 0 })
+                    props.updateHistorique(profile)
+                  })
+                  .catch(error => {
+                    throw new Error(error)
+                  })
+              }
             }}
           />
         )}
@@ -231,11 +235,13 @@ const checkEnterExistFordate = async (
   })
 }
 
-const calculImc = (profile: UserProfile, poids: number, setImc: (val) => void) => {
+const calculImc = (profile: UserProfile, poids: number) => {
   const value1: number = profile?.user_size * 2
   let result: number = poids / value1
 
   result = Math.round(result * 100) / 100
   result = parseInt(result.toString().split('.')[1])
-  setImc(result)
+  console.info(result, 'result')
+
+  return result
 }

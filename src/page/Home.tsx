@@ -88,6 +88,7 @@ const CurentScreen = (props: CurentScreenProps) => {
             <DragLeftBtn
               onTap={() => {
                 props.handleProfile(profile)
+
                 props.navigation.navigate('PROFILE')
               }}
               key={profile.id}
@@ -159,15 +160,7 @@ const FirstScreen = (props: FirstScreenProps) => {
             console.log('add profile')
             props.navigation.navigate('Add Profile')
           }}>
-          <Text
-            style={[
-              globalStyles.textColorPrimary,
-              globalStyles.textMedium,
-              globalStyles.textCenter,
-              globalStyles.textSize16,
-            ]}>
-            Crée profil
-          </Text>
+          <Text style={globalStyles.btnText}>Crée profil</Text>
         </ButtonComponent>
       </View>
     </SafeAreaView>

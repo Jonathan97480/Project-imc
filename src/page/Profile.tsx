@@ -1,12 +1,13 @@
 import React from 'react'
 import { View, Text, Image, ImageStyle, StyleSheet, ViewStyle } from 'react-native'
-import { ButtonComponent } from '../components/'
+import { Avatar, ButtonComponent } from '../components/'
 import { UserProfile } from '../interfaces'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import globalStyles from '../styles/global'
 
 interface ProfileProps {
+  updateHistorique(profile: UserProfile | null)
   profile: UserProfile | null
   navigation: any
   db: SQLiteDatabase
@@ -29,22 +30,7 @@ const Profile = (props: ProfileProps) => {
           Votre profil
         </Text>
         <View style={[{ justifyContent: 'center', alignItems: 'center' }, globalStyles.gap40]}>
-          {profile?.user_avatar === '' ? (
-            <Image
-              style={styles.avatar}
-              source={
-                profile.user_sexe === 'Femme'
-                  ? require('../assets/img/avatar_femme.png')
-                  : require('../assets/img/avatar_homme.png')
-              }
-            />
-          ) : (
-            <Image
-              source={{
-                uri: profile?.user_avatar,
-              }}
-            />
-          )}
+          <Avatar profile={profile} />
         </View>
         <Text
           style={[
@@ -113,16 +99,10 @@ const Profile = (props: ProfileProps) => {
 }
 
 interface styleInterface {
-  avatar: ImageStyle
   containtInfo: ViewStyle
 }
 
 const styles = StyleSheet.create<styleInterface>({
-  avatar: {
-    width: 87,
-    height: 87,
-    borderRadius: 87 / 2,
-  },
   containtInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
