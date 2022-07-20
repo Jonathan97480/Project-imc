@@ -6,7 +6,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
 import { UserProfile } from '../interfaces'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import globalStyles from '../styles/global'
-import { Value } from 'react-native-reanimated'
+import Logic from '../util/logic'
 
 interface HomeProps {
   db: SQLiteDatabase
@@ -18,16 +18,7 @@ interface HomeProps {
 const AddProfile = (props: HomeProps) => {
   const { db, handleProfile, navigation } = props
   const [profile, setProfile] = React.useState<UserProfile>(
-    !props.curentProfile
-      ? {
-        id: 0,
-        user_name: '',
-        user_sexe: '',
-        user_age: 0,
-        user_size: 0,
-        user_avatar: '',
-      }
-      : props.curentProfile,
+    !props.curentProfile ? Logic.createNewProfile() : props.curentProfile,
   )
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [isScreen2, setIsScreen2] = React.useState<boolean>(profile.id <= 0 ? false : true)
@@ -39,24 +30,8 @@ const AddProfile = (props: HomeProps) => {
     return (
       <SafeAreaView style={globalStyles.safeArea}>
         <View style={[globalStyles.container]}>
-          <Text
-            style={[
-              globalStyles.textColorPrimary,
-              globalStyles.textBold,
-              globalStyles.textCenter,
-              globalStyles.textSize24,
-              globalStyles.gap40,
-            ]}>
-            Création de profil
-          </Text>
-          <Text
-            style={[
-              globalStyles.textColorPrimary,
-              globalStyles.textLight,
-              globalStyles.textCenter,
-              globalStyles.textSize16,
-              globalStyles.gap40,
-            ]}>
+          <Text style={[globalStyles.title, globalStyles.gap40]}>Création de profil</Text>
+          <Text style={[globalStyles.paragraphe, globalStyles.gap40]}>
             Veuillez choisir votre sexe{' '}
           </Text>
           <View
@@ -81,16 +56,7 @@ const AddProfile = (props: HomeProps) => {
                 })
               }}>
               <Image source={require('../assets/img/womanHoldingHands.png')} />
-              <Text
-                style={[
-                  globalStyles.textColorPrimary,
-                  globalStyles.textBold,
-                  globalStyles.textCenter,
-                  globalStyles.textSize16,
-                  globalStyles.gap40,
-                ]}>
-                Femme
-              </Text>
+              <Text style={[globalStyles.btnText, globalStyles.gap40]}>Femme</Text>
             </ButtonComponent>
             <ButtonComponent
               style={
@@ -105,17 +71,7 @@ const AddProfile = (props: HomeProps) => {
                 })
               }}>
               <Image source={require('../assets/img/manHoldingHands.png')} />
-              <Text
-                style={[
-                  globalStyles.textColorPrimary,
-                  globalStyles.textBold,
-                  globalStyles.textCenter,
-                  globalStyles.textSize16,
-                  globalStyles.gap40,
-                ]}>
-                {' '}
-                Homme
-              </Text>
+              <Text style={[globalStyles.btnText, globalStyles.gap40]}> Homme</Text>
             </ButtonComponent>
           </View>
           <ButtonComponent
@@ -127,15 +83,7 @@ const AddProfile = (props: HomeProps) => {
                 alert('Veuillez selectionner votre sexe')
               }
             }}>
-            <Text
-              style={[
-                globalStyles.textColorPrimary,
-                globalStyles.textMedium,
-                globalStyles.textCenter,
-                globalStyles.textSize16,
-              ]}>
-              Suivant
-            </Text>
+            <Text style={[globalStyles.btnText, globalStyles.textSize16]}>Suivant</Text>
           </ButtonComponent>
         </View>
       </SafeAreaView>
@@ -144,16 +92,7 @@ const AddProfile = (props: HomeProps) => {
     return (
       <SafeAreaView style={[globalStyles.safeArea]}>
         <View>
-          <Text
-            style={[
-              globalStyles.textColorPrimary,
-              globalStyles.textBold,
-              globalStyles.textCenter,
-              globalStyles.textSize24,
-              globalStyles.gap40,
-            ]}>
-            Editer votre profil
-          </Text>
+          <Text style={[globalStyles.title, globalStyles.gap40]}>Editer votre profil</Text>
           <AddAvatar profile={profile} setProfile={setProfile} />
           <View style={[globalStyles.blockInput, globalStyles.gap30]}>
             <Text style={globalStyles.blockInputLabel}>Nom</Text>
@@ -188,6 +127,7 @@ const AddProfile = (props: HomeProps) => {
                 },
               ]}
               onChangeText={text => {
+                if (isNaN(parseInt(text)) || text === '') text = '0'
                 setProfile({
                   ...profile,
                   user_size: parseInt(text),
@@ -209,6 +149,7 @@ const AddProfile = (props: HomeProps) => {
                 },
               ]}
               onChangeText={text => {
+                if (isNaN(parseInt(text)) || text === '') text = '0'
                 setProfile({
                   ...profile,
                   user_age: parseInt(text),
@@ -259,15 +200,7 @@ const AddProfile = (props: HomeProps) => {
                 }
               }
             }}>
-            <Text
-              style={[
-                globalStyles.textColorPrimary,
-                globalStyles.textBold,
-                globalStyles.textCenter,
-                globalStyles.textSize16,
-              ]}>
-              Valider
-            </Text>
+            <Text style={[globalStyles.btnText, globalStyles.textSize16]}>Valider</Text>
           </ButtonComponent>
         </View>
       </SafeAreaView>

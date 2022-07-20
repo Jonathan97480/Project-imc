@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Pressable, ViewStyle } from 'react-native'
 
 interface ButtonProps {
-  style?: ViewStyle
+  style?: ViewStyle | ViewStyle[]
   onPress: () => void
   children: React.ReactNode
 }

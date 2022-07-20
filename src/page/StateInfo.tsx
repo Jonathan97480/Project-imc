@@ -3,8 +3,9 @@ import { View, Text } from 'react-native'
 import { UserProfile } from '../interfaces'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Avatar, ButtonComponent, Chart } from '../components'
+import { Avatar, ButtonComponent, Chart, PopinMounth, PopinWeek, PopinYear } from '../components'
 import globalStyles from '../styles/global'
+import Logic from '../util/logic'
 
 interface ImcProps {
   profile: UserProfile | null
@@ -24,14 +25,17 @@ const StateInfo = (props: ImcProps) => {
   }, [historique])
   /* TODO: a remplacer par un écrant ou un component */
   if (data2 === null || data2.length <= 0) return <Text>Acune donée disponible pour le moment</Text>
-  const days = getDays(data2)
-  const poids = returnPoids(data2)
-  const imc = returnImc(data2)
-  const labels = getLabelByDay(days)
+  const days = Logic.getDays(data2)
+  const poids = Logic.returnPoids(data2)
+  const imc = Logic.returnImc(data2)
+  const labels = Logic.getLabelByDay(days)
+  const [showPopinWeek, setShowPopinWeek] = React.useState(false)
+  const [showPopinMounth, setShowPopinMounth] = React.useState(false)
+  const [showPopinYear, setShowPopinYear] = React.useState(false)
 
   return (
     <SafeAreaView style={globalStyles.safeArea}>
-      <View>
+      <View style={{ position: 'relative' }}>
         <View style={[{ justifyContent: 'center', alignItems: 'center' }, globalStyles.gap40]}>
           <Avatar profile={profile} />
         </View>
@@ -44,16 +48,61 @@ const StateInfo = (props: ImcProps) => {
             { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
             globalStyles.gap40,
           ]}>
-          <ButtonComponent style={globalStyles.btnSmall} onPress={() => { }}>
+          <ButtonComponent
+            style={globalStyles.btnSmall}
+            onPress={() => {
+              setShowPopinWeek(true)
+            }}>
             <Text style={globalStyles.btnText}>Semaine</Text>
           </ButtonComponent>
-          <ButtonComponent style={globalStyles.btnSmall} onPress={() => { }}>
+          <ButtonComponent
+            style={globalStyles.btnSmall}
+            onPress={() => {
+              setShowPopinMounth(true)
+            }}>
             <Text style={globalStyles.btnText}>Mois</Text>
           </ButtonComponent>
-          <ButtonComponent style={globalStyles.btnSmall} onPress={() => { }}>
+          <ButtonComponent
+            style={globalStyles.btnSmall}
+            onPress={() => {
+              setShowPopinYear(true)
+            }}>
             <Text style={globalStyles.btnText}>Année</Text>
           </ButtonComponent>
         </View>
+        <PopinWeek
+          open={showPopinWeek}
+          close={() => {
+            setShowPopinWeek(false)
+          }}
+          onChangeMounth={(value: string) => {
+            console.log(value)
+          }}
+          onChangeWeek={(value: string) => {
+            console.log(value)
+          }}
+        />
+        <PopinMounth
+          open={showPopinMounth}
+          close={() => {
+            setShowPopinMounth(false)
+          }}
+          onChangeMounth={(value: string) => {
+            console.log(value)
+          }}
+          onChangeYear={(value: string) => {
+            console.log(value)
+          }}
+        />
+        <PopinYear
+          open={showPopinYear}
+          close={() => {
+            setShowPopinYear(false)
+          }}
+          onChangeYear={(value: string) => {
+            console.log(value)
+          }}
+        />
         {labels.length > 0 && <Chart imc={imc} poids={poids} labels={labels} />}
       </View>
     </SafeAreaView>
@@ -61,79 +110,3 @@ const StateInfo = (props: ImcProps) => {
 }
 
 export default StateInfo
-
-const returnDate = (date: any[]) => {
-  const newDate: Date[] = []
-
-  date.forEach(element => {
-    const date = new Date(element.date)
-    newDate.push(date)
-  })
-
-  return newDate
-}
-const returnImc = (date: any[]) => {
-  const newImc: number[] = []
-
-  date.forEach(element => {
-    newImc.push(element.imc)
-  })
-
-  return newImc
-}
-const returnPoids = (date: any[]) => {
-  const newPoids: number[] = []
-
-  date.forEach(element => {
-    newPoids.push(element.poids)
-  })
-
-  return newPoids
-}
-
-const getDays = (data: any[]): Days[] => {
-  const newDays: Days[] = []
-
-  const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']
-  const months = [
-    'Janvier',
-    'Février',
-    'Mars',
-    'Avril',
-    'Mai',
-    'Juin',
-    'Juillet',
-    'Août',
-    'Septembre',
-    'Octobre',
-    'Novembre',
-    'Décembre',
-  ]
-
-  for (let i = 0; i < data.length; i++) {
-    const d: string = data[i].date.split('/')
-    const newDate: Date = new Date(`${d[2]}/${d[1]}/${d[0]}`)
-    const day = days[newDate.getDay()]
-    const month = months[newDate.getMonth()]
-    const year = newDate.getFullYear()
-
-    newDays.push({ day, month, year })
-  }
-
-  return newDays
-}
-
-interface Days {
-  day: string
-  month: string
-  year: number
-}
-const getLabelByDay = (data: Days[]) => {
-  const newLabel: string[] = []
-
-  data.forEach(element => {
-    newLabel.push(element.day)
-  })
-
-  return newLabel
-}

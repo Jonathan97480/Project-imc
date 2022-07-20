@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Image, ImageStyle, StyleSheet, ViewStyle } from 'react-native'
+import { View, Text, StyleSheet, ViewStyle } from 'react-native'
 import { Avatar, ButtonComponent } from '../components/'
 import { UserProfile } from '../interfaces'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
@@ -110,40 +110,3 @@ const styles = StyleSheet.create<styleInterface>({
 })
 
 export default Profile
-{
-  /* <View>
-      <View>
-        <Text>Taille</Text>
-        <Text>{profile?.user_size}</Text>
-      </View>
-
-      <View>
-        <Text>Age</Text>
-        <Text>{profile?.user_age}</Text>
-      </View>
-
-      <ButtonComponent
-        onPress={() => {
-          navigation.navigate('IMC CALCUL', {
-            screen: 'Feed',
-            params: {
-              sort: 'latest',
-            },
-          })
-        }}>
-        IMC CALCUL
-      </ButtonComponent>
-
-      <ButtonComponent
-        onPress={() => {
-          navigation.navigate('Home', {
-            screen: 'Feed',
-            params: {
-              sort: 'latest',
-            },
-          })
-        }}>
-        REVENIR A LA LIST DES PROFILE
-      </ButtonComponent>
-    </View> */
-}

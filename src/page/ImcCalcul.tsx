@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { View, Text, TextInput } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
 import { ButtonComponent, PopinCalculImc, VuMeterComponent } from '../components/'
 import { UserProfile } from '../interfaces'
 import globalStyles from '../styles/global'
+import Logic from '../util/logic'
 
 interface ImcProps {
   profile: UserProfile | null
@@ -35,10 +36,10 @@ const ImcCalcul = (props: ImcProps) => {
   const handleImc = () => {
     if (profile?.user_size != undefined && poids != 0) {
       /* Check user is value exit for today */
-      checkEnterExistFordate(db, profile.id).then(_result => {
+      Logic.checkEnterExistFordate(db, profile.id, date).then(_result => {
         if (!_result.user) {
-          const newImc = calculImc(profile, poids)
-          insertImc(profile, poids, newImc, db).then(() => {
+          const newImc = Logic.calculImc(profile, poids)
+          Logic.insertImc(profile, poids, newImc, date, db).then(() => {
             setPoids(0)
             setImc(newImc)
             props.updateHistorique(profile)
@@ -75,9 +76,9 @@ const ImcCalcul = (props: ImcProps) => {
             }}
             onValidate={() => {
               if (profile) {
-                const newImc = calculImc(profile, poids)
+                const newImc = Logic.calculImc(profile, poids)
 
-                updateImc(showPopin.idEntry, poids, newImc, db)
+                Logic.updateImc(showPopin.idEntry, poids, newImc, db)
                   .then(() => {
                     setPoids(0)
                     setImc(newImc)
@@ -155,93 +156,3 @@ const ImcCalcul = (props: ImcProps) => {
 }
 
 export default ImcCalcul
-
-const insertImc = async (
-  _profile: UserProfile,
-  _poids: number,
-  _imc: number,
-  _db: SQLiteDatabase,
-) => {
-  new Promise((_resolve, _reject) => {
-    try {
-      _db.transaction(tx => {
-        tx.executeSql(
-          'INSERT INTO imc (user_id, user_name, user_poids, user_imc, imc_date) VALUES (?,?,?,?,?)',
-          [
-            _profile?.id,
-            _profile?.user_name,
-            _poids.toString(),
-            _imc.toString(),
-            `${date.day + '/' + date.month + '/' + date.year}`,
-          ],
-          (tx, result) => {
-            _resolve(result)
-          },
-          error => {
-            _reject(error)
-          },
-        )
-      })
-    } catch (error) {
-      throw new Error(error)
-    }
-  })
-}
-
-const updateImc = async (_idEntry: number, _poids: number, _imc: number, _db: SQLiteDatabase) => {
-  return await new Promise((_resolve, _reject) => {
-    _db.transaction(_ty => {
-      _ty.executeSql(
-        `UPDATE imc SET user_poids=? , user_imc=? WHERE id=${_idEntry} `,
-        [_poids, _imc],
-        (ty, _resutl) => {
-          _resolve(_resutl)
-        },
-        error => {
-          _reject(error)
-        },
-      )
-    })
-  })
-}
-
-const checkEnterExistFordate = async (
-  _db: SQLiteDatabase,
-  _idUser: number,
-): Promise<{ user?: UserProfile | null; error?: string | null }> => {
-  return await new Promise((_resolve, _reject) => {
-    _db.transaction(_ty => {
-      _ty.executeSql(
-        `SELECT * FROM imc WHERE imc_date =? AND user_id =? `,
-        [`${date.day + '/' + date.month + '/' + date.year}`, _idUser],
-        (_tx, _result) => {
-          if (_result.rows.item.length > 0) {
-            for (let index = 0; index < _result.rows.item.length; index++) {
-              const element: UserProfile = _result.rows.item(index)
-
-              _resolve({ user: element })
-            }
-          } else {
-            _resolve({
-              error: 'No entry',
-            })
-          }
-        },
-        _error => {
-          _reject(_error)
-        },
-      )
-    })
-  })
-}
-
-const calculImc = (profile: UserProfile, poids: number) => {
-  const value1: number = profile?.user_size * 2
-  let result: number = poids / value1
-
-  result = Math.round(result * 100) / 100
-  result = parseInt(result.toString().split('.')[1])
-  console.info(result, 'result')
-
-  return result
-}

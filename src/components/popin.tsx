@@ -1,86 +1,63 @@
+import Icon from 'react-native-vector-icons/FontAwesome'
 import React from 'react'
-import { View, Text, Pressable, ViewStyle, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 
 interface PopinInterface {
   title: string
-  message: string
-  buttons: {
-    label: string
-    action: () => void
-    color: string
-  }[]
+  children: React.ReactNode
+  open: boolean
+  close: () => void
 }
 
 const Popin = (props: PopinInterface) => {
-  const { title, message, buttons } = props
+  const { title, children, open } = props
 
+  if (!open) {
+    return null
+  }
   return (
-    <View style={styles.popinContenaire}>
-      <Text>{title}</Text>
-
-      <View style={styles.btnContenaire}>
-        <Text>{message}</Text>
-
-        {buttons.map((button, index) => {
-          return (
-            <Pressable
-              style={{
-                ...styles.btn,
-                backgroundColor: button.color,
-              }}
-              key={index + button.label}
-              onPress={button.action}>
-              <Text style={styles.btnText}>{button.label}</Text>
-            </Pressable>
-          )
-        })}
+    <View style={[styles.contenaire, { width: '100%', position: 'absolute', zIndex: 100 }]}>
+      <View
+        style={{
+          width: '100%',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 30,
+        }}>
+        <View style={{ width: 10, backgroundColor: 'red' }}></View>
+        <Text style={[styles.label, { paddingBottom: 0 }]}>{title}</Text>
+        <View
+          style={{ backgroundColor: 'red', padding: 4, borderRadius: 5 }}
+          onTouchEnd={() => {
+            props.close()
+          }}>
+          <Icon name="close" size={20} color="#fff" />
+        </View>
       </View>
+      {children}
     </View>
   )
 }
 
-interface Styles {
-  popinContenaire: ViewStyle
-  btnContenaire: ViewStyle
-  btn: ViewStyle
-  btnText: ViewStyle
-}
-
-const styles = StyleSheet.create<Styles>({
-  popinContenaire: {
-    backgroundColor: 'white',
+const styles = StyleSheet.create({
+  contenaire: {
+    backgroundColor: '#191E34',
     padding: 16,
-    borderRadius: 15,
-    borderWidth: 3,
-    position: 'absolute',
-    zIndex: 9999,
-    top: '40%',
-    left: '17%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    minHeight: 150,
-  },
-  btnContenaire: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    borderRadius: 5,
     width: '100%',
-  },
-  btn: {
-    minWidth: 100,
-    display: 'flex',
-    justifyContent: 'center',
+    flexDirection: 'column',
     alignItems: 'center',
-    padding: 10,
-    marginBottom: 4,
-    marginTop: 4,
+    justifyContent: 'center',
+    top: '30%',
   },
-  btnText: {
-    color: '#ffff',
+
+  label: {
+    color: 'white',
+    fontSize: 24,
     fontWeight: 'bold',
+    textAlign: 'center',
+    paddingBottom: 30,
   },
 })
 
