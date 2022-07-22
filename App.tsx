@@ -9,6 +9,7 @@ import { ResultSet, SQLiteDatabase } from 'react-native-sqlite-storage'
 import { ImcTable, UserProfile } from './src/interfaces'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import populateDataBase from './src/util/devUtil'
 let db: SQLiteDatabase
 
 dbInit().then(_db => {
@@ -22,10 +23,10 @@ const Stack = createNativeStackNavigator()
 
 const App = () => {
   const [historique, setHistorique] = useState<
-    { date: string | Date; poids: number; imc: number }[] | null
+    { date: string; poids: number; imc: number }[] | null
   >(null)
   const updateHistorique = (profile: UserProfile) => {
-    getHistoriqueUser(profile)
+    getHistoriqueUser(profile, 2022)
       .then(historique => {
         setHistorique(historique)
       })
@@ -39,6 +40,7 @@ const App = () => {
     createImcDataBase(db)
   }, [])
 
+  /*   populateDataBase(db, 4) */
   const handleProfile = (profile: UserProfile) => {
     curentUser = profile
     updateHistorique(profile)
@@ -82,7 +84,7 @@ const App = () => {
 interface HomeTabsProps {
   db: SQLiteDatabase
   updateHistorique: (profile: UserProfile) => void
-  historique: { date: string | Date; poids: number; imc: number }[] | null
+  historique: { date: string; poids: number; imc: number }[] | null
 }
 
 function HomeTabs(props: HomeTabsProps) {
@@ -121,11 +123,11 @@ function HomeTabs(props: HomeTabsProps) {
         }}>
         {props => (
           <StateInfo
+            historique={historique}
             {...props}
             db={db}
             profile={curentUser}
             updateHistorique={updateHistorique}
-            historique={historique}
           />
         )}
       </Tab.Screen>
@@ -187,20 +189,25 @@ function createImcDataBase(db: SQLiteDatabase) {
 
 async function getHistoriqueUser(
   profile: UserProfile,
-): Promise<{ date: string | Date; poids: number; imc: number }[]> {
-  return new Promise<{ date: string | Date; poids: number; imc: number }[]>((resolve, reject) => {
+  year: number,
+): Promise<{ date: string; poids: number; imc: number }[]> {
+  return new Promise<{ date: string; poids: number; imc: number }[]>((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM imc WHERE user_id=?',
-        [profile?.id],
+        'SELECT * FROM imc WHERE user_id=? AND imc_date LIKE ? ORDER BY id ASC',
+        [profile?.id, `%${year}%`],
         (tx, results) => {
           console.log(results, 'result imc table')
           const len = results.rows.length
-          const list: { date: string | Date; poids: number; imc: number }[] = []
+          const list: { date: string; poids: number; imc: number }[] = []
 
           for (let i = 0; i < len; i++) {
             const ligne: ImcTable = results.rows.item(i)
-            list.push({ date: ligne.imc_date, poids: ligne.user_poids, imc: ligne.user_imc })
+            list.push({
+              date: ligne.imc_date.toString(),
+              poids: ligne.user_poids,
+              imc: ligne.user_imc,
+            })
           }
 
           resolve(list)

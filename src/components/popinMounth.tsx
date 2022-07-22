@@ -1,11 +1,14 @@
 import React from 'react'
 import { View, Text } from 'react-native'
 import RNPickerSelect, { PickerStyle } from 'react-native-picker-select'
+import { custom } from '../interfaces'
 import globalStyles from '../styles/global'
+import Logic from '../util/logic'
 import ButtonComponent from './Button'
 import Popin from './popin'
 
 interface DialProps {
+  data: custom.Days[]
   onChangeYear: (value: string) => void
   onChangeMounth: (value: string) => void
   close: () => void
@@ -13,7 +16,10 @@ interface DialProps {
 }
 
 const PopinMounth = (props: DialProps) => {
-  const { onChangeMounth, onChangeYear, open } = props
+  const { onChangeMounth, onChangeYear, open, data } = props
+  const months = Logic.getAllMonths(data)
+  const years = Logic.getAllYears(data)
+
   return (
     <Popin title="Mois" open={open} close={props.close}>
       <View style={{ width: '90%' }}>
@@ -25,12 +31,7 @@ const PopinMounth = (props: DialProps) => {
           <RNPickerSelect
             placeholder={{ label: 'Sélectionnez  mois' }}
             style={styleInput}
-            items={[
-              { label: 'Janvier', value: '1' },
-              { label: 'Fevrier', value: '2' },
-              { label: 'Mars', value: '3' },
-              { label: 'Avril', value: '4' },
-            ]}
+            items={returnMonthsOptions(months)}
             onValueChange={value => {
               onChangeMounth(value)
             }}
@@ -38,12 +39,7 @@ const PopinMounth = (props: DialProps) => {
           <RNPickerSelect
             placeholder={{ label: 'Sélectionnez Anée' }}
             style={styleInput}
-            items={[
-              { label: '2019', value: '1' },
-              { label: '2020', value: '2' },
-              { label: '2021', value: '3' },
-              { label: '2022', value: '4' },
-            ]}
+            items={returnYearsOptions(years)}
             onValueChange={value => {
               onChangeYear(value)
             }}
@@ -61,6 +57,26 @@ const PopinMounth = (props: DialProps) => {
   )
 }
 export default PopinMounth
+
+function returnMonthsOptions(data: string[]) {
+  const months: { label: string; value: string }[] = []
+
+  data.forEach(month => {
+    months.push({ label: month, value: month })
+  })
+
+  return months
+}
+
+function returnYearsOptions(data: number[]) {
+  const years: { label: string; value: string }[] = []
+
+  data.forEach(year => {
+    years.push({ label: year.toString(), value: year.toString() })
+  })
+
+  return years
+}
 
 const styleInput: PickerStyle = {
   placeholder: {

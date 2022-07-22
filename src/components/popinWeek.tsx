@@ -1,19 +1,34 @@
 import React from 'react'
 import { View, Text } from 'react-native'
 import RNPickerSelect, { PickerStyle } from 'react-native-picker-select'
+import { custom } from '../interfaces'
 import globalStyles from '../styles/global'
+import Logic from '../util/logic'
 import ButtonComponent from './Button'
 import Popin from './popin'
 
 interface DialProps {
-  onChangeWeek: (value: string) => void
-  onChangeMounth: (value: string) => void
+  data: custom.Days[]
+  onValidate: (week: number, month: number) => void
   close: () => void
   open: boolean
 }
 
 const PopinWeek = (props: DialProps) => {
-  const { onChangeMounth, onChangeWeek, open } = props
+  const { onValidate, open, data } = props
+  const weeks = Logic.getAllDays(data)
+  const months = Logic.getAllMonths(data)
+  const [fitre, setFitre] = React.useState<{ week: number; mount: number }>({
+    week: 0,
+    mount: 0,
+  })
+  const onChangeWeek = (value: string) => {
+    setFitre({ ...fitre, week: Number(value) })
+  }
+  const onChangeMount = (value: string) => {
+    setFitre({ ...fitre, mount: Number(value) })
+  }
+
   return (
     <Popin title="Semaine" open={open} close={props.close}>
       <View style={{ width: '90%' }}>
@@ -24,12 +39,7 @@ const PopinWeek = (props: DialProps) => {
           <RNPickerSelect
             placeholder={{ label: 'Sélectionnez semaine' }}
             style={styleInput}
-            items={[
-              { label: 'Semaine 1', value: '1' },
-              { label: 'Semaine 2', value: '2' },
-              { label: 'Semaine 3', value: '3' },
-              { label: 'Semaine 4', value: '4' },
-            ]}
+            items={returnWeeksOptions(weeks)}
             onValueChange={value => {
               onChangeWeek(value)
             }}
@@ -37,21 +47,20 @@ const PopinWeek = (props: DialProps) => {
           <RNPickerSelect
             placeholder={{ label: 'Sélectionnez  mois' }}
             style={styleInput}
-            items={[
-              { label: 'Janvier', value: '1' },
-              { label: 'Fevrier', value: '2' },
-              { label: 'Mars', value: '3' },
-              { label: 'Avril', value: '4' },
-            ]}
+            items={returnMonthsOptions(months)}
             onValueChange={value => {
-              onChangeMounth(value)
+              onChangeMount(value)
             }}
           />
         </View>
         <ButtonComponent
           style={[globalStyles.ButtonStyle, { backgroundColor: '#193427' }]}
           onPress={() => {
-            console.log('ok')
+            if (fitre.mount !== 0 && fitre.week !== 0) {
+              onValidate(fitre.week, fitre.mount)
+              return
+            }
+            alert('Veuillez sélectionner une semaine et un mois')
           }}>
           <Text style={globalStyles.btnText}>Valider</Text>
         </ButtonComponent>
@@ -60,6 +69,44 @@ const PopinWeek = (props: DialProps) => {
   )
 }
 export default PopinWeek
+
+function returnWeeksOptions(data: {
+  week1: string[]
+  week2: string[]
+  week3: string[]
+  week4: string[]
+  week5: string[]
+}) {
+  const weeks: { label: string; value: string }[] = []
+
+  if (data.week1.length > 0) {
+    weeks.push({ label: 'Semaine 1', value: '1' })
+  }
+  if (data.week2.length > 0) {
+    weeks.push({ label: 'Semaine 2', value: '2' })
+  }
+  if (data.week3.length > 0) {
+    weeks.push({ label: 'Semaine 3', value: '3' })
+  }
+  if (data.week4.length > 0) {
+    weeks.push({ label: 'Semaine 4', value: '4' })
+  }
+  if (data.week5.length > 0) {
+    weeks.push({ label: 'Semaine 5', value: '5' })
+  }
+
+  return weeks
+}
+
+function returnMonthsOptions(data: string[]) {
+  const months: { label: string; value: string }[] = []
+
+  data.forEach(month => {
+    months.push({ label: month, value: Logic.getNumberMonth(month).toString() })
+  })
+
+  return months
+}
 
 const styleInput: PickerStyle = {
   placeholder: {

@@ -1,19 +1,22 @@
 import React from 'react'
 import { View, Text } from 'react-native'
 import RNPickerSelect, { PickerStyle } from 'react-native-picker-select'
+import { custom } from '../interfaces'
 import globalStyles from '../styles/global'
+import Logic from '../util/logic'
 import ButtonComponent from './Button'
 import Popin from './popin'
 
 interface DialProps {
   onChangeYear: (value: string) => void
-
+  data: custom.Days[]
   close: () => void
   open: boolean
 }
 
 const PopinYear = (props: DialProps) => {
-  const { onChangeYear, open } = props
+  const { onChangeYear, open, data } = props
+  const years = Logic.getAllYears(data)
   return (
     <Popin title="Anée" open={open} close={props.close}>
       <View style={{ width: '90%' }}>
@@ -25,12 +28,7 @@ const PopinYear = (props: DialProps) => {
           <RNPickerSelect
             placeholder={{ label: 'Sélectionnez Anée' }}
             style={styleInput}
-            items={[
-              { label: '2019', value: '1' },
-              { label: '2020', value: '2' },
-              { label: '2021', value: '3' },
-              { label: '2022', value: '4' },
-            ]}
+            items={returnYearsOptions(years)}
             onValueChange={value => {
               onChangeYear(value)
             }}
@@ -48,6 +46,16 @@ const PopinYear = (props: DialProps) => {
   )
 }
 export default PopinYear
+
+function returnYearsOptions(data: number[]) {
+  const years: { label: string; value: string }[] = []
+
+  data.forEach(year => {
+    years.push({ label: year.toString(), value: year.toString() })
+  })
+
+  return years
+}
 
 const styleInput: PickerStyle = {
   placeholder: {

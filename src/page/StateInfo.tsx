@@ -1,23 +1,24 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
-import { UserProfile } from '../interfaces'
+import { custom, UserProfile } from '../interfaces'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Avatar, ButtonComponent, Chart, PopinMounth, PopinWeek, PopinYear } from '../components'
 import globalStyles from '../styles/global'
 import Logic from '../util/logic'
+import { panHandlerName } from 'react-native-gesture-handler/lib/typescript/handlers/PanGestureHandler'
 
 interface ImcProps {
   profile: UserProfile | null
 
   db: SQLiteDatabase
   updateHistorique: (val) => void
-  historique: { date: string | Date; poids: number; imc: number }[] | null
+  historique: { date: string; poids: number; imc: number }[] | null
 }
 
 const StateInfo = (props: ImcProps) => {
   const { profile, historique } = props
-  const [data2, setData2] = React.useState<any[]>(historique ? historique : [])
+  const [data2, setData2] = React.useState<custom.dataBaseImcTable[]>(historique ? historique : [])
   useEffect(() => {
     if (historique) {
       setData2(historique)
@@ -26,12 +27,41 @@ const StateInfo = (props: ImcProps) => {
   /* TODO: a remplacer par un écrant ou un component */
   if (data2 === null || data2.length <= 0) return <Text>Acune donée disponible pour le moment</Text>
   const days = Logic.getDays(data2)
-  const poids = Logic.returnPoids(data2)
-  const imc = Logic.returnImc(data2)
-  const labels = Logic.getLabelByDay(days)
+  const [poids, setPoids] = useState(Logic.returnPoids(data2))
+  const [imc, setImc] = useState(Logic.returnImc(data2))
+  const [labels, setLabels] = useState(Logic.getLabelByDay(days))
+
   const [showPopinWeek, setShowPopinWeek] = React.useState(false)
   const [showPopinMounth, setShowPopinMounth] = React.useState(false)
   const [showPopinYear, setShowPopinYear] = React.useState(false)
+
+  const handleWeek = (week: number, month: number) => {
+    setShowPopinWeek(false)
+    const newData = Logic.filterDataByWeekAndCurrentYear(data2, week, month)
+
+    setPoids(Logic.returnPoids(newData))
+    setImc(Logic.returnImc(newData))
+    setLabels(Logic.getLabelByDay(Logic.getDays(newData)))
+    console.log(labels)
+  }
+
+  const handleMounth = (year: number, month: number) => {
+    setShowPopinMounth(false)
+    const newData = Logic.filterDataByMonthAndYear(data2, year, month)
+
+    setPoids(Logic.returnPoids(newData))
+    setImc(Logic.returnImc(newData))
+    setLabels(Logic.getLabelByDay(Logic.getDays(newData)))
+  }
+
+  const handleYear = (year: number) => {
+    setShowPopinYear(false)
+    const newData = Logic.filterDataByYear(data2, year)
+
+    setPoids(Logic.returnPoids(newData))
+    setImc(Logic.returnImc(newData))
+    setLabels(Logic.getLabelByDay(Logic.getDays(newData)))
+  }
 
   return (
     <SafeAreaView style={globalStyles.safeArea}>
@@ -71,18 +101,17 @@ const StateInfo = (props: ImcProps) => {
           </ButtonComponent>
         </View>
         <PopinWeek
+          data={Logic.getAllDateForCurrentYear(days)}
           open={showPopinWeek}
           close={() => {
             setShowPopinWeek(false)
           }}
-          onChangeMounth={(value: string) => {
-            console.log(value)
-          }}
-          onChangeWeek={(value: string) => {
-            console.log(value)
+          onValidate={(week: number, month: number) => {
+            handleWeek(week, month)
           }}
         />
         <PopinMounth
+          data={days}
           open={showPopinMounth}
           close={() => {
             setShowPopinMounth(false)
@@ -95,6 +124,7 @@ const StateInfo = (props: ImcProps) => {
           }}
         />
         <PopinYear
+          data={days}
           open={showPopinYear}
           close={() => {
             setShowPopinYear(false)

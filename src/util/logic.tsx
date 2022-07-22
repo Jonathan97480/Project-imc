@@ -139,7 +139,7 @@ class Logic {
 
     result = Math.round(result * 100) / 100
     result = parseInt(result.toString().split('.')[1])
-    console.info(result, 'result')
+    /*  console.info(result, 'result') */
 
     return result
   }
@@ -228,12 +228,13 @@ class Logic {
 
     for (let i = 0; i < data.length; i++) {
       const d: string = data[i].date.split('/')
+
       const newDate: Date = new Date(`${d[2]}/${d[1]}/${d[0]}`)
       const day = days[newDate.getDay()]
       const month = months[newDate.getMonth()]
       const year = newDate.getFullYear()
 
-      newDays.push({ day, month, year })
+      newDays.push({ day, month, year, newDate })
     }
 
     return newDays
@@ -246,6 +247,175 @@ class Logic {
     })
 
     return newLabel
+  }
+  static getAllYears = (data: custom.Days[]) => {
+    const newYears: number[] = []
+
+    data.forEach(element => {
+      if (!newYears.includes(element.year)) {
+        newYears.push(element.year)
+      }
+    })
+
+    return newYears
+  }
+  static getAllMonths = (data: custom.Days[]) => {
+    const newMonths: string[] = []
+
+    data.forEach(element => {
+      if (!newMonths.includes(element.month)) {
+        newMonths.push(element.month)
+      }
+    })
+
+    return newMonths
+  }
+  static getAllDays = (data: custom.Days[]) => {
+    const newDays: {
+      week1: string[]
+      week2: string[]
+      week3: string[]
+      week4: string[]
+      week5: string[]
+    } = {
+      week1: [],
+      week2: [],
+      week3: [],
+      week4: [],
+      week5: [],
+    }
+
+    data.forEach(element => {
+      const curentDay = element.newDate.getDate()
+      if (curentDay <= 7) {
+        newDays.week1.push(element.day)
+      } else if (curentDay <= 14) {
+        newDays.week2.push(element.day)
+      } else if (curentDay <= 21) {
+        newDays.week3.push(element.day)
+      } else if (curentDay <= 28) {
+        newDays.week4.push(element.day)
+      } else if (curentDay <= 31) {
+        newDays.week5.push(element.day)
+      }
+    })
+
+    return newDays
+  }
+
+  static getAllDateForCurrentYear = (data: custom.Days[]) => {
+    const newDate: custom.Days[] = []
+
+    data.forEach(element => {
+      if (element.year === new Date().getFullYear()) {
+        newDate.push(element)
+      }
+    })
+
+    return newDate
+  }
+
+  static filterDataByYear = (data: custom.dataBaseImcTable[], year: number) => {
+    const newData: custom.dataBaseImcTable[] = []
+
+    data.forEach(element => {
+      if (element.date.split('/')[2] === year.toString()) {
+        newData.push(element)
+      }
+    })
+
+    return newData
+  }
+  static filterDataByMonthAndYear = (
+    data: custom.dataBaseImcTable[],
+    month: number,
+    year: number,
+  ) => {
+    const newData: custom.dataBaseImcTable[] = []
+
+    data.forEach(element => {
+      if (
+        element.date.split('/')[1] === month.toString() &&
+        element.date.split('/')[2] === year.toString()
+      ) {
+        newData.push(element)
+      }
+    })
+
+    return newData
+  }
+  static filterDataByWeekAndCurrentYear = (
+    data: custom.dataBaseImcTable[],
+    week: number,
+    month: number,
+  ) => {
+    const newData: custom.dataBaseImcTable[] = []
+    const currentYear = new Date().getFullYear()
+    let newWeek = 0
+
+    if (week === 1) {
+      newWeek = 7
+    }
+    if (week === 2) {
+      newWeek = 14
+    }
+    if (week === 3) {
+      newWeek = 21
+    }
+    if (week === 4) {
+      newWeek = 28
+    }
+    if (week === 5) {
+      newWeek = 31
+    }
+
+    data.forEach(element => {
+      const elementDate = element.date.split('/')
+
+      if (
+        elementDate[2] === currentYear.toString() &&
+        parseInt(elementDate[0]) >= 1 &&
+        parseInt(elementDate[1]) === month &&
+        parseInt(elementDate[0]) <= 7 &&
+        parseInt(elementDate[1]) === month
+      ) {
+        console.log(element)
+
+        newData.push(element)
+      }
+    })
+
+    return newData
+  }
+  static getNumberMonth = (month: string) => {
+    switch (month) {
+      case 'Janvier':
+        return 1
+      case 'Février':
+        return 2
+      case 'Mars':
+        return 3
+      case 'Avril':
+        return 4
+      case 'Mai':
+        return 5
+      case 'Juin':
+        return 6
+      case 'Juillet':
+        return 7
+      case 'Août':
+        return 8
+      case 'Septembre':
+        return 9
+      case 'Octobre':
+        return 10
+      case 'Novembre':
+        return 11
+      case 'Décembre':
+        return 12
+      default:
+        return 0
+    }
   }
 }
 

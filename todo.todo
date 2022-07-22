@@ -1,0 +1,26 @@
+screen:
+  - home:
+      - Ajouter l'icone pour apropos
+      - Ajouter un bouton pour Ajouter un nouveau profil
+  - profile:
+      - Ajouter une icone dans le bouton Modifier 
+      - Ajouter des icone prés de taille age et poids
+      
+  - AddProfil:
+      - Ajouter la popin pour la selection entre la caméra et la gallerie
+  
+  - CalculImc:
+      - Ajouter une icone dans le bouton calculer
+      - Ajouter un encare avec le poids de dépare
+      - une fois le calcul fait rajouter une comparaison entre les deuw poids et félicités l'utilisateur si il a perdu du poids
+  
+  - StateInfo:
+      - Ajouter le tableau des diférentes messures fait sur le temps
+      - Générer le contenu des popin de manière dynamique @done
+      - Crée l'algorithme pour le filtrage des données pour les afficher sur le graphique et le tableau
+
+bug:
+  - fixer le bug dans calculImc quand on click sur le bouton sans entrée de valeur génére un bug sur le mobile
+
+Data:
+    - génerer un jeu de données pour les tests sur 3 ans et sur 3 profil fictive @done
