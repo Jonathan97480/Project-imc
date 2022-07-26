@@ -97,7 +97,7 @@ class Logic {
               _profile?.user_name,
               _poids.toString(),
               _imc.toString(),
-              `${_date.day + '/' + _date.month + '/' + _date.year}`,
+              `${_date.year + '/' + _date.month + '/' + _date.day}`,
             ],
             (tx, result) => {
               _resolve(result)
@@ -123,8 +123,8 @@ class Logic {
         _ty.executeSql(
           `UPDATE imc SET user_poids=? , user_imc=? WHERE id=${_idEntry} `,
           [_poids, _imc],
-          (ty, _resutl) => {
-            _resolve(_resutl)
+          (ty, _result) => {
+            _resolve(_result)
           },
           error => {
             _reject(error)
@@ -143,7 +143,7 @@ class Logic {
 
     return result
   }
-  static checkEnterExistFordate = async (
+  static checkEnterExistForDate = async (
     _db: SQLiteDatabase,
     _idUser: number,
     _date: {
@@ -156,7 +156,7 @@ class Logic {
       _db.transaction(_ty => {
         _ty.executeSql(
           `SELECT * FROM imc WHERE imc_date =? AND user_id =? `,
-          [`${_date.day + '/' + _date.month + '/' + _date.year}`, _idUser],
+          [`${_date.year + '/' + _date.month + '/' + _date.day}`, _idUser],
           (_tx, _result) => {
             if (_result.rows.item.length > 0) {
               for (let index = 0; index < _result.rows.item.length; index++) {
@@ -188,7 +188,7 @@ class Logic {
 
     return newDate
   }
-  static returnImc = (date: any[]) => {
+  static returnImc = (date: custom.dataBaseImcTable[]) => {
     const newImc: number[] = []
 
     date.forEach(element => {
@@ -197,7 +197,7 @@ class Logic {
 
     return newImc
   }
-  static returnPoids = (date: any[]) => {
+  static returnPoids = (date: custom.dataBaseImcTable[]) => {
     const newPoids: number[] = []
 
     date.forEach(element => {
@@ -207,10 +207,10 @@ class Logic {
     return newPoids
   }
 
-  static getDays = (data: any[]): custom.Days[] => {
+  static getDays = (data: custom.dataBaseImcTable[]): custom.Days[] => {
     const newDays: custom.Days[] = []
 
-    const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']
+    const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
     const months = [
       'Janvier',
       'Février',
@@ -227,9 +227,23 @@ class Logic {
     ]
 
     for (let i = 0; i < data.length; i++) {
-      const d: string = data[i].date.split('/')
+      const d: string[] = data[i].date.split('/')
+      const date: { day: string; month: string; year: string } = {
+        day: d[2],
+        month: d[1],
+        year: d[0],
+      }
+      if (date.day === '0') {
+        continue
+      }
+      if (date.month.length === 1) {
+        date.month = '0' + date.month
+      }
+      if (date.day.length === 1) {
+        date.day = '0' + date.day
+      }
 
-      const newDate: Date = new Date(`${d[2]}/${d[1]}/${d[0]}`)
+      const newDate: Date = new Date(`${date.year}/${date.month}/${date.day}`)
       const day = days[newDate.getDay()]
       const month = months[newDate.getMonth()]
       const year = newDate.getFullYear()
@@ -243,7 +257,8 @@ class Logic {
     const newLabel: string[] = []
 
     data.forEach(element => {
-      newLabel.push(element.day)
+      element.newDate
+      newLabel.push(element.day + ' ' + element.newDate.getDate())
     })
 
     return newLabel
@@ -301,6 +316,53 @@ class Logic {
     })
 
     return newDays
+  }
+
+  static getDataForCurrentYear = async (
+    db: SQLiteDatabase,
+    idUser: number,
+  ): Promise<custom.dataBaseImcTable[]> => {
+    const curentDate = new Date()
+    const currentDay = curentDate.getDate()
+    const currentMonth = curentDate.getMonth() + 1
+    const currentYear = curentDate.getFullYear()
+    let stringMonth = currentMonth.toString()
+    let stringDay = currentDay.toString()
+    if (currentMonth.toString().length === 1) {
+      stringMonth = '0' + currentMonth.toString()
+    }
+    if (currentDay.toString().length === 1) {
+      stringDay = '0' + currentDay.toString()
+    }
+    const dateIntervalle = {
+      end: `${currentYear}/${stringMonth}/${stringDay}`,
+      start: `${currentYear}/01/01`,
+    }
+
+    return await new Promise((_resolve, _reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          `SELECT * FROM imc WHERE imc_date BETWEEN  '${dateIntervalle.start}'  AND  '${dateIntervalle.end}' AND user_id = ${idUser} ORDER BY imc_date ASC`,
+          [],
+          (tx, _result) => {
+            const data: custom.dataBaseImcTable[] = []
+            for (let index = 0; index < _result.rows.length; index++) {
+              const element = _result.rows.item(index)
+              data.push({
+                date: element.imc_date,
+                poids: element.user_poids,
+                imc: element.user_imc,
+              })
+            }
+
+            _resolve(data)
+          },
+          error => {
+            _reject(error)
+          },
+        )
+      })
+    })
   }
 
   static getAllDateForCurrentYear = (data: custom.Days[]) => {
@@ -369,8 +431,9 @@ class Logic {
       newWeek = 31
     }
 
-    data.forEach(element => {
-      const elementDate = element.date.split('/')
+    for (let index = 0; index < data.length; index++) {
+      const element: custom.dataBaseImcTable = data[index]
+      const elementDate: string[] = element.date.split('/')
 
       if (
         elementDate[2] === currentYear.toString() &&
@@ -379,11 +442,13 @@ class Logic {
         parseInt(elementDate[0]) <= 7 &&
         parseInt(elementDate[1]) === month
       ) {
-        console.log(element)
-
+        if (Logic.getDayByDateString(element.date) === 'Dimanche') {
+          /*  newData.push(element) */
+          break
+        }
         newData.push(element)
       }
-    })
+    }
 
     return newData
   }
@@ -416,6 +481,13 @@ class Logic {
       default:
         return 0
     }
+  }
+  static getDayByDateString(date: string) {
+    const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+    const d = date.split('/')
+    const newDate: Date = new Date(`${d[0]}/${d[1]}/${d[2]}`)
+    const day = days[newDate.getDay()]
+    return day
   }
 }
 

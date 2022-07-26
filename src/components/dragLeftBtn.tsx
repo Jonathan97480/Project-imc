@@ -19,13 +19,13 @@ import { UserProfile } from '../interfaces'
 import globalStyles from '../styles/global'
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 const TRANSLATE_X_THRESHOLD = -SCREEN_WIDTH * 0.3
-interface DragLeftBtnprops extends Pick<PanGestureHandlerProps, 'simultaneousHandlers'> {
+interface DragLeftBtnProps extends Pick<PanGestureHandlerProps, 'simultaneousHandlers'> {
   profile: UserProfile
   onDrag: () => void
   onTap?: () => void
 }
 
-const DragLeftBtn = (props: DragLeftBtnprops) => {
+const DragLeftBtn = (props: DragLeftBtnProps) => {
   const singleTap = Gesture.Tap()
   singleTap.maxDuration(1000)
   singleTap.onStart(() => {

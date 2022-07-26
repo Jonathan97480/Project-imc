@@ -21,7 +21,7 @@ const Chart = (props: ChartProps) => {
     barPercentage: 0.5,
     useShadowColorFromDataset: false, // optional
   }
-  const newdata = {
+  const newData = {
     labels: labels,
     datasets: [
       {
@@ -39,7 +39,7 @@ const Chart = (props: ChartProps) => {
   }
   return (
     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-      <LineChart data={newdata} width={screenWidth} height={220} chartConfig={chartConfig} bezier />
+      <LineChart data={newData} width={screenWidth} height={220} chartConfig={chartConfig} bezier />
     </View>
   )
 }

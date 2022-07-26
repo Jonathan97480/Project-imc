@@ -1,22 +1,23 @@
 import React from 'react'
+/* cSpell:disable */
 import { View, Text, Pressable, ViewStyle, StyleSheet } from 'react-native'
 
-interface PopinCalculImc {
+interface PopInCalculImc {
   onValidate: () => void
   onCancel: () => void
 }
 
-const PopinCalculImc = (props: PopinCalculImc) => {
+const PopInCalculImc = (props: PopInCalculImc) => {
   const { onValidate, onCancel } = props
 
   return (
-    <View style={[styles.contenaire, { position: 'absolute', zIndex: 100 }]}>
-      <Text style={styles.label}>Atention</Text>
+    <View style={[styles.container, { position: 'absolute', zIndex: 100 }]}>
+      <Text style={styles.label}>Attention</Text>
       <Text style={styles.paragraphe}>
-        Relancez un nouveau calcul ecrasera les donées que vous avez déja entrée aujourd’hui
+        Relancez un nouveau calcul écrasera les données que vous avez déjà entrée aujourd’hui
       </Text>
 
-      <View style={styles.btnContenaire}>
+      <View style={styles.btnContainer}>
         <View style={styles.btnBlock}>
           <Pressable style={[styles.btn, styles.btnColorValide]} onPress={onValidate}>
             <Text style={styles.btnText}>Validée</Text>
@@ -31,7 +32,7 @@ const PopinCalculImc = (props: PopinCalculImc) => {
 }
 
 const styles = StyleSheet.create({
-  contenaire: {
+  container: {
     backgroundColor: '#191E34',
     padding: 16,
     borderRadius: 5,
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '300',
   },
-  btnContenaire: {},
+  btnContainer: {},
   btnText: {
     color: 'white',
     fontWeight: 'bold',
@@ -72,4 +73,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default PopinCalculImc
+export default PopInCalculImc

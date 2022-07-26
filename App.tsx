@@ -40,7 +40,6 @@ const App = () => {
     createImcDataBase(db)
   }, [])
 
-  /*   populateDataBase(db, 4) */
   const handleProfile = (profile: UserProfile) => {
     curentUser = profile
     updateHistorique(profile)
@@ -189,13 +188,35 @@ function createImcDataBase(db: SQLiteDatabase) {
 
 async function getHistoriqueUser(
   profile: UserProfile,
-  year: number,
 ): Promise<{ date: string; poids: number; imc: number }[]> {
+  const curentDate = new Date()
+  const currentDay = curentDate.getDate()
+  const currentMonth = curentDate.getMonth() + 1
+  const currentYear = curentDate.getFullYear()
+  let stringMonth = currentMonth.toString()
+  let stringDay = currentDay.toString()
+  if (currentMonth.toString().length === 1) {
+    stringMonth = '0' + currentMonth.toString()
+  }
+  if (currentDay.toString().length === 1) {
+    stringDay = '0' + currentDay.toString()
+  }
+  let startDay: number | string = currentDay - 6
+  if (startDay < 1) {
+    startDay = 1
+  }
+  if (startDay.toString().length === 1) {
+    startDay = '0' + startDay.toString()
+  }
+  const dateIntervalle = {
+    end: `${currentYear}/${stringMonth}/${stringDay}`,
+    start: `${currentYear}/${stringMonth}/${startDay}`,
+  }
   return new Promise<{ date: string; poids: number; imc: number }[]>((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM imc WHERE user_id=? AND imc_date LIKE ? ORDER BY id ASC',
-        [profile?.id, `%${year}%`],
+        `SELECT * FROM imc WHERE imc_date BETWEEN  '${dateIntervalle.start}'  AND  '${dateIntervalle.end}' AND user_id = ${profile.id} ORDER BY imc_date ASC`,
+        [],
         (tx, results) => {
           console.log(results, 'result imc table')
           const len = results.rows.length

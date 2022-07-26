@@ -43,7 +43,7 @@ const Profile = (props: ProfileProps) => {
           {profile?.user_name}
         </Text>
         <View style={globalStyles.gap40}>
-          <View style={[styles.containtInfo, globalStyles.gap40]}>
+          <View style={[styles.containerInfo, globalStyles.gap40]}>
             <Text
               style={[
                 globalStyles.textColorPrimary,
@@ -56,7 +56,7 @@ const Profile = (props: ProfileProps) => {
               {profile?.user_size} cm
             </Text>
           </View>
-          {/*  <View style={[styles.containtInfo, globalStyles.gap40,]}>
+          {/*  <View style={[styles.containerInfo, globalStyles.gap40,]}>
             <Text  style={[
                 globalStyles.textColorPrimary,
                 globalStyles.textSize16,
@@ -64,7 +64,7 @@ const Profile = (props: ProfileProps) => {
               ]}>Votre poids</Text>
             <Text  style={[globalStyles.textColorPrimary, { fontSize: 20 }, globalStyles.textBold]}>{profile?.us}</Text>
           </View> */}
-          <View style={styles.containtInfo}>
+          <View style={styles.containerInfo}>
             <Text
               style={[
                 globalStyles.textColorPrimary,
@@ -99,11 +99,11 @@ const Profile = (props: ProfileProps) => {
 }
 
 interface styleInterface {
-  containtInfo: ViewStyle
+  containerInfo: ViewStyle
 }
 
 const styles = StyleSheet.create<styleInterface>({
-  containtInfo: {
+  containerInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

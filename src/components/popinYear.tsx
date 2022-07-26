@@ -5,7 +5,7 @@ import { custom } from '../interfaces'
 import globalStyles from '../styles/global'
 import Logic from '../util/logic'
 import ButtonComponent from './Button'
-import Popin from './popin'
+import PopIn from './popIn'
 
 interface DialProps {
   onChangeYear: (value: string) => void
@@ -14,19 +14,19 @@ interface DialProps {
   open: boolean
 }
 
-const PopinYear = (props: DialProps) => {
+const PopInYear = (props: DialProps) => {
   const { onChangeYear, open, data } = props
   const years = Logic.getAllYears(data)
   return (
-    <Popin title="Anée" open={open} close={props.close}>
+    <PopIn title="Ânées" open={open} close={props.close}>
       <View style={{ width: '90%' }}>
         <View>
           <Text style={[globalStyles.gap30, globalStyles.paragraphe]}>
-            Sélectionnez l&apos;anée
+            Sélectionnez l&apos;ânées
           </Text>
 
           <RNPickerSelect
-            placeholder={{ label: 'Sélectionnez Anée' }}
+            placeholder={{ label: 'Sélectionnez Ânées' }}
             style={styleInput}
             items={returnYearsOptions(years)}
             onValueChange={value => {
@@ -42,10 +42,10 @@ const PopinYear = (props: DialProps) => {
           <Text style={globalStyles.btnText}>Valider</Text>
         </ButtonComponent>
       </View>
-    </Popin>
+    </PopIn>
   )
 }
-export default PopinYear
+export default PopInYear
 
 function returnYearsOptions(data: number[]) {
   const years: { label: string; value: string }[] = []

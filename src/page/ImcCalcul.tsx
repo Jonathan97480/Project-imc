@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { View, Text, TextInput } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
-import { ButtonComponent, PopinCalculImc, VuMeterComponent } from '../components/'
+import { ButtonComponent, PopInCalculImc, VuMeterComponent } from '../components/'
 import { UserProfile } from '../interfaces'
 import globalStyles from '../styles/global'
 import Logic from '../util/logic'
@@ -36,7 +36,7 @@ const ImcCalcul = (props: ImcProps) => {
   const handleImc = () => {
     if (profile?.user_size != undefined && poids != 0) {
       /* Check user is value exit for today */
-      Logic.checkEnterExistFordate(db, profile.id, date).then(_result => {
+      Logic.checkEnterExistForDate(db, profile.id, date).then(_result => {
         if (!_result.user) {
           const newImc = Logic.calculImc(profile, poids)
           Logic.insertImc(profile, poids, newImc, date, db).then(() => {
@@ -70,7 +70,7 @@ const ImcCalcul = (props: ImcProps) => {
         </View>
 
         {showPopin.active && (
-          <PopinCalculImc
+          <PopInCalculImc
             onCancel={() => {
               setShowPopin({ active: false, idEntry: 0 })
             }}

@@ -3,10 +3,9 @@ import { View, Text } from 'react-native'
 import { custom, UserProfile } from '../interfaces'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Avatar, ButtonComponent, Chart, PopinMounth, PopinWeek, PopinYear } from '../components'
+import { Avatar, ButtonComponent, Chart, PopInMonth, PopInWeek, PopInYear } from '../components'
 import globalStyles from '../styles/global'
 import Logic from '../util/logic'
-import { panHandlerName } from 'react-native-gesture-handler/lib/typescript/handlers/PanGestureHandler'
 
 interface ImcProps {
   profile: UserProfile | null
@@ -24,38 +23,36 @@ const StateInfo = (props: ImcProps) => {
       setData2(historique)
     }
   }, [historique])
-  /* TODO: a remplacer par un écrant ou un component */
+  /* TODO: a remplacer par un écran ou un component */
   if (data2 === null || data2.length <= 0) return <Text>Acune donée disponible pour le moment</Text>
   const days = Logic.getDays(data2)
   const [poids, setPoids] = useState(Logic.returnPoids(data2))
   const [imc, setImc] = useState(Logic.returnImc(data2))
   const [labels, setLabels] = useState(Logic.getLabelByDay(days))
 
-  const [showPopinWeek, setShowPopinWeek] = React.useState(false)
-  const [showPopinMounth, setShowPopinMounth] = React.useState(false)
-  const [showPopinYear, setShowPopinYear] = React.useState(false)
+  const [showPopInWeek, setShowPopInWeek] = React.useState(false)
+  const [showPopInMonth, setShowPopInMonth] = React.useState(false)
+  const [showPopInYear, setShowPopInYear] = React.useState(false)
 
-  const handleWeek = (week: number, month: number) => {
-    setShowPopinWeek(false)
-    const newData = Logic.filterDataByWeekAndCurrentYear(data2, week, month)
-
-    setPoids(Logic.returnPoids(newData))
-    setImc(Logic.returnImc(newData))
-    setLabels(Logic.getLabelByDay(Logic.getDays(newData)))
-    console.log(labels)
+  const handleWeek = (data: custom.dataBaseImcTable[]) => {
+    setShowPopInWeek(false)
+    setPoids(Logic.returnPoids(data))
+    setImc(Logic.returnImc(data))
+    setLabels(Logic.getLabelByDay(Logic.getDays(data)))
   }
 
-  const handleMounth = (year: number, month: number) => {
-    setShowPopinMounth(false)
+  const handleMonth = (year: number, month: number) => {
+    setShowPopInMonth(false)
     const newData = Logic.filterDataByMonthAndYear(data2, year, month)
 
-    setPoids(Logic.returnPoids(newData))
-    setImc(Logic.returnImc(newData))
-    setLabels(Logic.getLabelByDay(Logic.getDays(newData)))
+    /*     setPoids(Logic.returnPoids(newData)) */
+
+    /*  setImc(Logic.returnImc(newData))
+    setLabels(Logic.getLabelByDay(Logic.getDays(newData))) */
   }
 
   const handleYear = (year: number) => {
-    setShowPopinYear(false)
+    setShowPopInYear(false)
     const newData = Logic.filterDataByYear(data2, year)
 
     setPoids(Logic.returnPoids(newData))
@@ -81,53 +78,54 @@ const StateInfo = (props: ImcProps) => {
           <ButtonComponent
             style={globalStyles.btnSmall}
             onPress={() => {
-              setShowPopinWeek(true)
+              setShowPopInWeek(true)
             }}>
             <Text style={globalStyles.btnText}>Semaine</Text>
           </ButtonComponent>
           <ButtonComponent
             style={globalStyles.btnSmall}
             onPress={() => {
-              setShowPopinMounth(true)
+              setShowPopInMonth(true)
             }}>
             <Text style={globalStyles.btnText}>Mois</Text>
           </ButtonComponent>
           <ButtonComponent
             style={globalStyles.btnSmall}
             onPress={() => {
-              setShowPopinYear(true)
+              setShowPopInYear(true)
             }}>
             <Text style={globalStyles.btnText}>Année</Text>
           </ButtonComponent>
         </View>
-        <PopinWeek
-          data={Logic.getAllDateForCurrentYear(days)}
-          open={showPopinWeek}
+        <PopInWeek
+          open={showPopInWeek}
+          db={props.db}
+          idUser={profile ? profile?.id : 0}
           close={() => {
-            setShowPopinWeek(false)
+            setShowPopInWeek(false)
           }}
-          onValidate={(week: number, month: number) => {
-            handleWeek(week, month)
+          onValidate={(data: custom.dataBaseImcTable[]) => {
+            handleWeek(data)
           }}
         />
-        <PopinMounth
+        <PopInMonth
           data={days}
-          open={showPopinMounth}
+          open={showPopInMonth}
           close={() => {
-            setShowPopinMounth(false)
+            setShowPopInMonth(false)
           }}
-          onChangeMounth={(value: string) => {
+          onChangeMonth={(value: string) => {
             console.log(value)
           }}
           onChangeYear={(value: string) => {
             console.log(value)
           }}
         />
-        <PopinYear
+        <PopInYear
           data={days}
-          open={showPopinYear}
+          open={showPopInYear}
           close={() => {
-            setShowPopinYear(false)
+            setShowPopInYear(false)
           }}
           onChangeYear={(value: string) => {
             console.log(value)

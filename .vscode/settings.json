@@ -1,4 +1,10 @@
 {
     "javascript.format.enable": true,
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "cSpell.language": "fr-FR,en",
+    "cSpell.words": [
+        "Gauvin",
+        "Hoareau",
+        "Leroux"
+    ]
 }

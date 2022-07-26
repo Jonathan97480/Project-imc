@@ -80,7 +80,7 @@ const AddProfile = (props: HomeProps) => {
               if (profile.user_sexe != '') {
                 setIsScreen2(true)
               } else {
-                alert('Veuillez selectionner votre sexe')
+                alert('Veuillez sélectionner votre sexe')
               }
             }}>
             <Text style={[globalStyles.btnText, globalStyles.textSize16]}>Suivant</Text>
@@ -92,7 +92,7 @@ const AddProfile = (props: HomeProps) => {
     return (
       <SafeAreaView style={[globalStyles.safeArea]}>
         <View>
-          <Text style={[globalStyles.title, globalStyles.gap40]}>Editer votre profil</Text>
+          <Text style={[globalStyles.title, globalStyles.gap40]}>Éditer votre profil</Text>
           <AddAvatar profile={profile} setProfile={setProfile} />
           <View style={[globalStyles.blockInput, globalStyles.gap30]}>
             <Text style={globalStyles.blockInputLabel}>Nom</Text>
@@ -217,23 +217,23 @@ interface AddAvatarProps {
 
 const AddAvatar = (props: AddAvatarProps) => {
   const { profile, setProfile } = props
-  const [showPopin, setShowPopin] = useState(false)
+  const [showPopIn, setShowPopIn] = useState(false)
   return (
     <View style={[{ justifyContent: 'center', alignItems: 'center' }, globalStyles.gap40]}>
       <Image source={require('../assets/img/uploadPicIcon.png')} />
-      {showPopin && (
-        <PopinAddAvatar profile={profile} setProfile={setProfile} setShowPopin={setShowPopin} />
+      {showPopIn && (
+        <PopInAddAvatar profile={profile} setProfile={setProfile} setShowPopIn={setShowPopIn} />
       )}
     </View>
   )
 }
 
-interface PopinAddAvatarProps extends AddAvatarProps {
-  setShowPopin: (val: boolean) => void
+interface PopInAddAvatarProps extends AddAvatarProps {
+  setShowPopIn: (val: boolean) => void
 }
 
-const PopinAddAvatar = (props: PopinAddAvatarProps) => {
-  const { profile, setProfile, setShowPopin } = props
+const PopInAddAvatar = (props: PopInAddAvatarProps) => {
+  const { profile, setProfile, setShowPopIn } = props
   return (
     <View>
       <ButtonComponent

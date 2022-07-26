@@ -2,21 +2,21 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 
-interface PopinInterface {
+interface PopInInterface {
   title: string
   children: React.ReactNode
   open: boolean
   close: () => void
 }
 
-const Popin = (props: PopinInterface) => {
+const PopIn = (props: PopInInterface) => {
   const { title, children, open } = props
 
   if (!open) {
     return null
   }
   return (
-    <View style={[styles.contenaire, { width: '100%', position: 'absolute', zIndex: 100 }]}>
+    <View style={[styles.container, { width: '100%', position: 'absolute', zIndex: 100 }]}>
       <View
         style={{
           width: '100%',
@@ -41,7 +41,7 @@ const Popin = (props: PopinInterface) => {
 }
 
 const styles = StyleSheet.create({
-  contenaire: {
+  container: {
     backgroundColor: '#191E34',
     padding: 16,
     borderRadius: 5,
@@ -61,4 +61,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default Popin
+export default PopIn

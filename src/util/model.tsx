@@ -8,7 +8,7 @@ async function dbInit(): Promise<SQLiteDatabase> {
   })
 }
 async function get(db, table, id) {
-  db.transation(tx => {
+  db.transaction(tx => {
     tx.executeSql(
       `SELECT * FROM ${table} WHERE id=?`,
       [id],
@@ -21,7 +21,7 @@ async function get(db, table, id) {
 }
 
 async function getAll(db, table) {
-  db.transation(tx => {
+  db.transaction(tx => {
     tx.executeSql(
       `SELECT * FROM ${table}`,
       [],
@@ -39,7 +39,7 @@ async function insert(db, table, data) {
   const keys = Object.keys(data)
   const sql = `INSERT INTO ${table} (${keys.join(',')}) VALUES (${values.join(',')})`
 
-  db.transation(tx => {
+  db.transaction(tx => {
     tx.executeSql(sql).then(results => {
       console.info('Query success INSERT')
       return results.rows.item(0)
@@ -48,7 +48,7 @@ async function insert(db, table, data) {
 }
 
 async function update(db, table, data, id) {
-  db.transation(tx => {
+  db.transaction(tx => {
     tx.executeSql(
       `UPDATE ${table} SET ${Object.keys(data)
         .map(key => `${key}=?`)
@@ -63,7 +63,7 @@ async function update(db, table, data, id) {
 }
 
 async function deleteEnter(db, table, id) {
-  db.transation(tx => {
+  db.transaction(tx => {
     tx.executeSql(
       `DELETE FROM ${table} WHERE id =? `,
       [id],
@@ -76,7 +76,7 @@ async function deleteEnter(db, table, id) {
 }
 
 async function deleteAll(db, table) {
-  db.transation(tx => {
+  db.transaction(tx => {
     tx.executeSql(
       `DELETE FROM ${table} `,
       [],
@@ -89,7 +89,7 @@ async function deleteAll(db, table) {
 }
 
 async function drop(db, table) {
-  db.transation(tx => {
+  db.transaction(tx => {
     tx.executeSql(
       `DROP TABLE ${table} `,
       [],

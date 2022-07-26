@@ -5,27 +5,27 @@ import { custom } from '../interfaces'
 import globalStyles from '../styles/global'
 import Logic from '../util/logic'
 import ButtonComponent from './Button'
-import Popin from './popin'
+import PopIn from './popIn'
 
 interface DialProps {
   data: custom.Days[]
   onChangeYear: (value: string) => void
-  onChangeMounth: (value: string) => void
+  onChangeMonth: (value: string) => void
   close: () => void
   open: boolean
 }
 
-const PopinMounth = (props: DialProps) => {
-  const { onChangeMounth, onChangeYear, open, data } = props
+const PopInMonth = (props: DialProps) => {
+  const { onChangeMonth, onChangeYear, open, data } = props
   const months = Logic.getAllMonths(data)
   const years = Logic.getAllYears(data)
 
   return (
-    <Popin title="Mois" open={open} close={props.close}>
+    <PopIn title="Mois" open={open} close={props.close}>
       <View style={{ width: '90%' }}>
         <View>
           <Text style={[globalStyles.gap30, globalStyles.paragraphe]}>
-            Sélectionnez votre Mois est l&apos;anée
+            Sélectionnez votre Mois est l&apos;ânée
           </Text>
 
           <RNPickerSelect
@@ -33,11 +33,11 @@ const PopinMounth = (props: DialProps) => {
             style={styleInput}
             items={returnMonthsOptions(months)}
             onValueChange={value => {
-              onChangeMounth(value)
+              onChangeMonth(value)
             }}
           />
           <RNPickerSelect
-            placeholder={{ label: 'Sélectionnez Anée' }}
+            placeholder={{ label: 'Sélectionnez Ânée' }}
             style={styleInput}
             items={returnYearsOptions(years)}
             onValueChange={value => {
@@ -53,10 +53,10 @@ const PopinMounth = (props: DialProps) => {
           <Text style={globalStyles.btnText}>Valider</Text>
         </ButtonComponent>
       </View>
-    </Popin>
+    </PopIn>
   )
 }
-export default PopinMounth
+export default PopInMonth
 
 function returnMonthsOptions(data: string[]) {
   const months: { label: string; value: string }[] = []
