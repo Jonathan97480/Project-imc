@@ -41,14 +41,17 @@ const StateInfo = (props: ImcProps) => {
     setLabels(Logic.getLabelByDay(Logic.getDays(data)))
   }
 
-  const handleMonth = (year: number, month: number) => {
+  const handleMonth = (data: {
+    poids: number[]
+    imc: number[]
+    label: string[]
+    date: string[]
+  }) => {
     setShowPopInMonth(false)
-    const newData = Logic.filterDataByMonthAndYear(data2, year, month)
 
-    /*     setPoids(Logic.returnPoids(newData)) */
-
-    /*  setImc(Logic.returnImc(newData))
-    setLabels(Logic.getLabelByDay(Logic.getDays(newData))) */
+    setPoids(data.poids)
+    setImc(data.imc)
+    setLabels(data.label)
   }
 
   const handleYear = (year: number) => {
@@ -109,16 +112,14 @@ const StateInfo = (props: ImcProps) => {
           }}
         />
         <PopInMonth
-          data={days}
           open={showPopInMonth}
+          idUser={profile ? profile?.id : 0}
+          db={props.db}
           close={() => {
             setShowPopInMonth(false)
           }}
-          onChangeMonth={(value: string) => {
-            console.log(value)
-          }}
-          onChangeYear={(value: string) => {
-            console.log(value)
+          onValidate={data => {
+            handleMonth(data)
           }}
         />
         <PopInYear

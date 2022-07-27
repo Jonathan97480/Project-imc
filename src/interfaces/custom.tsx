@@ -3,7 +3,7 @@ module custom {
     day: string
     month: string
     year: number
-    newDate: Date
+    newFinalDate: Date
   }
   export interface dataBaseImcTable {
     date: string

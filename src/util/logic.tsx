@@ -207,8 +207,14 @@ class Logic {
     return newPoids
   }
 
-  static getDays = (data: custom.dataBaseImcTable[]): custom.Days[] => {
+  static getDays = (
+    data: custom.dataBaseImcTable[] | null,
+    date?: string[] | null,
+  ): custom.Days[] => {
     const newDays: custom.Days[] = []
+    if (data === null && date === null) {
+      return newDays
+    }
 
     const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
     const months = [
@@ -225,40 +231,67 @@ class Logic {
       'Novembre',
       'Décembre',
     ]
+    if (data) {
+      for (let i = 0; i < data.length; i++) {
+        const d: string[] = data[i].date.split('/')
+        const newDate: { day: string; month: string; year: string } = {
+          day: d[2],
+          month: d[1],
+          year: d[0],
+        }
+        if (newDate.day === '0') {
+          continue
+        }
+        if (newDate.month.length === 1) {
+          newDate.month = '0' + newDate.month
+        }
+        if (newDate.day.length === 1) {
+          newDate.day = '0' + newDate.day
+        }
 
-    for (let i = 0; i < data.length; i++) {
-      const d: string[] = data[i].date.split('/')
-      const date: { day: string; month: string; year: string } = {
-        day: d[2],
-        month: d[1],
-        year: d[0],
-      }
-      if (date.day === '0') {
-        continue
-      }
-      if (date.month.length === 1) {
-        date.month = '0' + date.month
-      }
-      if (date.day.length === 1) {
-        date.day = '0' + date.day
-      }
+        const newFinalDate: Date = new Date(`${newDate.year}/${newDate.month}/${newDate.day}`)
+        const day = days[newFinalDate.getDay()]
+        const month = months[newFinalDate.getMonth()]
+        const year = newFinalDate.getFullYear()
 
-      const newDate: Date = new Date(`${date.year}/${date.month}/${date.day}`)
-      const day = days[newDate.getDay()]
-      const month = months[newDate.getMonth()]
-      const year = newDate.getFullYear()
-
-      newDays.push({ day, month, year, newDate })
+        newDays.push({ day, month, year, newFinalDate })
+      }
     }
+    if (date) {
+      for (let i = 0; i < date.length; i++) {
+        const d: string[] = date[i].split('/')
+        const newDate: { day: string; month: string; year: string } = {
+          day: d[2],
+          month: d[1],
+          year: d[0],
+        }
 
+        if (newDate.day === '0' || newDate.day === '00') {
+          continue
+        }
+        if (newDate.month.length === 1) {
+          newDate.month = '0' + newDate.month
+        }
+        if (newDate.day.length === 1) {
+          newDate.day = '0' + newDate.day
+        }
+
+        const newFinalDate: Date = new Date(`${newDate.year}/${newDate.month}/${newDate.day}`)
+        const day = days[newFinalDate.getDay()]
+        const month = months[newFinalDate.getMonth()]
+        const year = newFinalDate.getFullYear()
+
+        newDays.push({ day, month, year, newFinalDate })
+      }
+    }
     return newDays
   }
   static getLabelByDay = (data: custom.Days[]) => {
     const newLabel: string[] = []
 
     data.forEach(element => {
-      element.newDate
-      newLabel.push(element.day + ' ' + element.newDate.getDate())
+      element.newFinalDate
+      newLabel.push(element.day + ' ' + element.newFinalDate.getDate())
     })
 
     return newLabel
@@ -301,7 +334,7 @@ class Logic {
     }
 
     data.forEach(element => {
-      const curentDay = element.newDate.getDate()
+      const curentDay = element.newFinalDate.getDate()
       if (curentDay <= 7) {
         newDays.week1.push(element.day)
       } else if (curentDay <= 14) {
@@ -488,6 +521,30 @@ class Logic {
     const newDate: Date = new Date(`${d[0]}/${d[1]}/${d[2]}`)
     const day = days[newDate.getDay()]
     return day
+  }
+
+  static async getAllDateForDataBase(db: SQLiteDatabase, idUser: number): Promise<string[]> {
+    return await new Promise((_resolve, _reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          `SELECT imc_date FROM imc WHERE user_id = ${idUser} ORDER BY imc_date ASC`,
+          [],
+          (tx, _result) => {
+            const data: string[] = []
+            for (let index = 0; index < _result.rows.length; index++) {
+              const element = _result.rows.item(index)
+
+              data.push(element.imc_date)
+            }
+
+            _resolve(data)
+          },
+          error => {
+            _reject(error)
+          },
+        )
+      })
+    })
   }
 }
 
