@@ -32,16 +32,17 @@ const StateInfo = (props: ImcProps) => {
     }
   }, [historique])
   /* TODO: a remplacer par un écran ou un component */
-  if (data2 === null || data2.length <= 0) return <Text>Acune donée disponible pour le moment</Text>
+  if (data2 === null || data2.length <= 0)
+    return <Text>Aucune donnée disponible pour le moment</Text>
   const days = Logic.getDays(data2)
   const [poids, setPoids] = useState(Logic.returnPoids(data2))
   const [imc, setImc] = useState(Logic.returnImc(data2))
-  const [labels, setLabels] = useState(Logic.getLabelByDay(days))
+  const [labels, setLabels] = useState<string[]>(Logic.getLabelByDay(days))
 
   const [showPopInWeek, setShowPopInWeek] = React.useState(false)
   const [showPopInMonth, setShowPopInMonth] = React.useState(false)
   const [showPopInYear, setShowPopInYear] = React.useState(false)
-  const [date, setDate] = React.useState<string[]>([])
+  const [date, setDate] = React.useState<string[] | undefined>(Logic.getDate(data2))
 
   const handleWeek = (data: custom.dataBaseImcTable[]) => {
     setShowPopInWeek(false)
@@ -63,6 +64,7 @@ const StateInfo = (props: ImcProps) => {
     setPoids(data.poids)
     setImc(data.imc)
     setLabels(data.label)
+    setDate(data.date)
   }
 
   const handleYear = (data: { poids: number[]; imc: number[]; label: string[] }) => {
@@ -70,6 +72,7 @@ const StateInfo = (props: ImcProps) => {
     setPoids(data.poids)
     setImc(data.imc)
     setLabels(data.label)
+    setDate(undefined)
   }
 
   return (
@@ -150,6 +153,7 @@ const StateInfo = (props: ImcProps) => {
             poids: poids,
             imc: imc,
             date: date,
+            label: labels,
           }}
         />
       </ScrollView>

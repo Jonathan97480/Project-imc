@@ -4,7 +4,7 @@ import { View, Text, Dimensions, ViewStyle, StyleSheet, TextStyle, Button } from
 import { useEffect } from 'react'
 
 interface TableProps {
-  data: { imc: number[]; poids: number[]; date?: string[] }
+  data: { imc: number[]; poids: number[]; date?: string[]; label?: string[] }
 }
 
 const CustomTable = (props: TableProps) => {
@@ -13,6 +13,7 @@ const CustomTable = (props: TableProps) => {
     imc: number[]
     poids: number[]
     date?: string[]
+    label?: string[]
   }>({ imc: [], poids: [] })
 
   useEffect(() => {
@@ -64,11 +65,16 @@ const styles = StyleSheet.create<Styles>({
   text: { margin: 6 },
 })
 
-function dataSerialize(tableData: { imc: number[]; poids: number[]; date?: string[] }) {
+function dataSerialize(tableData: {
+  imc: number[]
+  poids: number[]
+  date?: string[]
+  label?: string[]
+}) {
   const rows: (string | number)[][] = []
   for (let index = 0; index < tableData.imc.length; index++) {
     const row = [
-      tableData.date ? tableData.date[index] : '',
+      tableData.date ? tableData.date[index] : tableData.label ? tableData.label[index] : '',
       tableData.poids[index],
       tableData.imc[index],
     ]
