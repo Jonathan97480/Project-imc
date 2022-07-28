@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StatusBar } from 'react-native'
+import { View, Text, Pressable, StatusBar, Image } from 'react-native'
 import React, { useEffect } from 'react'
 import { ButtonComponent, DragLeftBtn } from '../components/'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
@@ -88,9 +88,27 @@ const CurentScreen = (props: CurentScreenProps) => {
               }}
             />
           ))}
+          <ButtonComponent
+            style={[globalStyles.ButtonStyle, globalStyles.gap20]}
+            onPress={() => {
+              props.navigation.navigate('Add Profile')
+            }}>
+            <Text style={globalStyles.btnText}>Ajouter un profil</Text>
+          </ButtonComponent>
         </ScrollView>
-        <View>
-          <Pressable>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Pressable
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Image source={require('../assets/img/icon_apropos.png')} style={{ marginRight: 10 }} />
             <Text style={[globalStyles.btnText, { textDecorationLine: 'underline' }]}>
               A propos
             </Text>

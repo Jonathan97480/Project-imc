@@ -87,7 +87,11 @@ const DragLeftBtn = (props: DragLeftBtnProps) => {
                 globalStyles.textColorPrimary,
                 globalStyles.textSize16,
                 globalStyles.textMedium,
-                { textTransform: 'capitalize' },
+                {
+                  textTransform: 'capitalize',
+                  width: '65%',
+                  textAlign: 'center',
+                },
               ]}>
               {props.profile.user_name}
             </Text>
