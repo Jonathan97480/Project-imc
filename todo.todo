@@ -7,7 +7,7 @@ screen:
       - Ajouter des icone prés de taille age et poids
       
   - AddProfil:
-      - Ajouter la popin pour la selection entre la caméra et la gallerie
+      - Ajouter la popin pour la selection entre la caméra et la gallerie @done
   
   - CalculImc:
       - Ajouter une icone dans le bouton calculer

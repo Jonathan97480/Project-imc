@@ -1,12 +1,21 @@
 import React, { useState } from 'react'
-import { View, Text, Image, PermissionsAndroid, TextInput, StatusBar } from 'react-native'
+import {
+  View,
+  Text,
+  Image,
+  PermissionsAndroid,
+  TextInput,
+  StatusBar,
+  Pressable,
+} from 'react-native'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
-import { ButtonComponent } from '../components/'
+import { ButtonComponent, PopIn } from '../components/'
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
 import { UserProfile } from '../interfaces'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import globalStyles from '../styles/global'
 import Logic from '../util/logic'
+import { center } from '@shopify/react-native-skia'
 
 interface HomeProps {
   db: SQLiteDatabase
@@ -224,7 +233,10 @@ const AddAvatar = (props: AddAvatarProps) => {
   const [showPopIn, setShowPopIn] = useState(false)
   return (
     <View style={[{ justifyContent: 'center', alignItems: 'center' }, globalStyles.gap40]}>
-      <Image source={require('../assets/img/uploadPicIcon.png')} />
+      <Pressable onPress={() => setShowPopIn(true)}>
+        <Image source={require('../assets/img/uploadPicIcon.png')} />
+      </Pressable>
+
       {showPopIn && (
         <PopInAddAvatar profile={profile} setProfile={setProfile} setShowPopIn={setShowPopIn} />
       )}
@@ -239,8 +251,18 @@ interface PopInAddAvatarProps extends AddAvatarProps {
 const PopInAddAvatar = (props: PopInAddAvatarProps) => {
   const { profile, setProfile, setShowPopIn } = props
   return (
-    <View>
+    <PopIn title={'choisisses votre méthode'} open={true} close={() => setShowPopIn(false)}>
       <ButtonComponent
+        style={[
+          globalStyles.ButtonStyle,
+          {
+            maxWidth: 300,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+          },
+          globalStyles.gap10,
+        ]}
         onPress={async () => {
           try {
             const granted = await PermissionsAndroid.request(
@@ -283,9 +305,18 @@ const PopInAddAvatar = (props: PopInAddAvatarProps) => {
             console.warn(err)
           }
         }}>
-        <Text>Camera</Text>
+        <Image source={require('../assets/img/camera.png')} />
+
+        <Text style={[globalStyles.btnText, { textAlign: 'center', width: '80%' }]}>
+          Appareil photo
+        </Text>
       </ButtonComponent>
       <ButtonComponent
+        style={[
+          globalStyles.ButtonStyle,
+          { maxWidth: 300, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+          globalStyles.gap10,
+        ]}
         onPress={async () => {
           try {
             const granted = await PermissionsAndroid.request(
@@ -326,8 +357,9 @@ const PopInAddAvatar = (props: PopInAddAvatarProps) => {
             console.warn(err)
           }
         }}>
-        <Text>Galerie</Text>
+        <Image source={require('../assets/img/galerie.png')} />
+        <Text style={[globalStyles.btnText, { textAlign: 'center', width: '80%' }]}>Galerie</Text>
       </ButtonComponent>
-    </View>
+    </PopIn>
   )
 }
