@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, Image, PermissionsAndroid, TextInput } from 'react-native'
+import { View, Text, Image, PermissionsAndroid, TextInput, StatusBar } from 'react-native'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
 import { ButtonComponent } from '../components/'
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
@@ -29,6 +29,8 @@ const AddProfile = (props: HomeProps) => {
   if (!isScreen2) {
     return (
       <SafeAreaView style={globalStyles.safeArea}>
+        <StatusBar backgroundColor={'#1C2137'} />
+
         <View style={[globalStyles.container]}>
           <Text style={[globalStyles.title, globalStyles.gap40]}>Création de profil</Text>
           <Text style={[globalStyles.paragraphe, globalStyles.gap40]}>
@@ -91,6 +93,8 @@ const AddProfile = (props: HomeProps) => {
   } else {
     return (
       <SafeAreaView style={[globalStyles.safeArea]}>
+        <StatusBar backgroundColor={'#1C2137'} />
+
         <View>
           <Text style={[globalStyles.title, globalStyles.gap40]}>Éditer votre profil</Text>
           <AddAvatar profile={profile} setProfile={setProfile} />

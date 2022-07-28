@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native'
+import { View, Text, Pressable, StatusBar } from 'react-native'
 import React, { useEffect } from 'react'
 import { ButtonComponent, DragLeftBtn } from '../components/'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
@@ -57,6 +57,8 @@ interface CurentScreenProps {
 const CurentScreen = (props: CurentScreenProps) => {
   return (
     <SafeAreaView style={globalStyles.safeArea}>
+      <StatusBar backgroundColor={'#1C2137'} />
+
       <View>
         <Text style={[globalStyles.gap40, globalStyles.title]}>Heureux de vous revoir :)</Text>
         <Text style={[globalStyles.gap40, globalStyles.paragraphe]}>
@@ -105,6 +107,8 @@ interface FirstScreenProps {
 const FirstScreen = (props: FirstScreenProps) => {
   return (
     <SafeAreaView style={globalStyles.safeArea}>
+      <StatusBar backgroundColor={'#1C2137'} />
+
       <View style={globalStyles.container}>
         <Text style={[globalStyles.gap40, globalStyles.title]}>Bonjour:)</Text>
         <Text style={[globalStyles.gap40, globalStyles.paragraphe]}>

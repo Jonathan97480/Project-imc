@@ -17,10 +17,10 @@ screen:
   - StateInfo:
       - Ajouter le tableau des diférentes messures fait sur le temps
       - Générer le contenu des popin de manière dynamique @done
-      - Crée l'algorithme pour le filtrage:
+      - Crée l'algorithme pour le filtrage: @done
           - par semaine @done
           - par mois @done
-          - par ans
+          - par ans @done
 
 bug:
   - fixer le bug dans calculImc quand on click sur le bouton sans entrée de valeur génére un bug sur le mobile

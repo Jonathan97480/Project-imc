@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, StatusBar } from 'react-native'
 import { custom, UserProfile } from '../interfaces'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Avatar, ButtonComponent, Chart, PopInMonth, PopInWeek, PopInYear } from '../components'
+import {
+  Avatar,
+  ButtonComponent,
+  Chart,
+  CustomTable,
+  PopInMonth,
+  PopInWeek,
+  PopInYear,
+} from '../components'
 import globalStyles from '../styles/global'
 import Logic from '../util/logic'
-
+import { ScrollView } from 'react-native-virtualized-view'
 interface ImcProps {
   profile: UserProfile | null
 
@@ -33,12 +41,15 @@ const StateInfo = (props: ImcProps) => {
   const [showPopInWeek, setShowPopInWeek] = React.useState(false)
   const [showPopInMonth, setShowPopInMonth] = React.useState(false)
   const [showPopInYear, setShowPopInYear] = React.useState(false)
+  const [date, setDate] = React.useState<string[]>([])
 
   const handleWeek = (data: custom.dataBaseImcTable[]) => {
     setShowPopInWeek(false)
     setPoids(Logic.returnPoids(data))
     setImc(Logic.returnImc(data))
     setLabels(Logic.getLabelByDay(Logic.getDays(data)))
+    const newDate = Logic.getDate(data)
+    setDate(newDate)
   }
 
   const handleMonth = (data: {
@@ -54,18 +65,17 @@ const StateInfo = (props: ImcProps) => {
     setLabels(data.label)
   }
 
-  const handleYear = (year: number) => {
+  const handleYear = (data: { poids: number[]; imc: number[]; label: string[] }) => {
     setShowPopInYear(false)
-    const newData = Logic.filterDataByYear(data2, year)
-
-    setPoids(Logic.returnPoids(newData))
-    setImc(Logic.returnImc(newData))
-    setLabels(Logic.getLabelByDay(Logic.getDays(newData)))
+    setPoids(data.poids)
+    setImc(data.imc)
+    setLabels(data.label)
   }
 
   return (
     <SafeAreaView style={globalStyles.safeArea}>
-      <View style={{ position: 'relative' }}>
+      <StatusBar backgroundColor={'#1C2137'} />
+      <ScrollView style={{ position: 'relative' }}>
         <View style={[{ justifyContent: 'center', alignItems: 'center' }, globalStyles.gap40]}>
           <Avatar profile={profile} />
         </View>
@@ -123,17 +133,26 @@ const StateInfo = (props: ImcProps) => {
           }}
         />
         <PopInYear
-          data={days}
+          db={props.db}
+          idUser={profile ? profile?.id : 0}
           open={showPopInYear}
           close={() => {
             setShowPopInYear(false)
           }}
-          onChangeYear={(value: string) => {
-            console.log(value)
+          onValidate={value => {
+            handleYear(value)
           }}
         />
         {labels.length > 0 && <Chart imc={imc} poids={poids} labels={labels} />}
-      </View>
+
+        <CustomTable
+          data={{
+            poids: poids,
+            imc: imc,
+            date: date,
+          }}
+        />
+      </ScrollView>
     </SafeAreaView>
   )
 }

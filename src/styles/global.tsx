@@ -4,7 +4,7 @@ const globalStyles = StyleSheet.create({
     backgroundColor: '#1d233e',
     minHeight: '100%',
     width: '100%',
-    padding: 39,
+    padding: 10,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',

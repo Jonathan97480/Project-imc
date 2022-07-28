@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, ViewStyle } from 'react-native'
+import { View, Text, StyleSheet, ViewStyle, StatusBar } from 'react-native'
 import { Avatar, ButtonComponent } from '../components/'
 import { UserProfile } from '../interfaces'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
@@ -18,6 +18,8 @@ const Profile = (props: ProfileProps) => {
 
   return (
     <SafeAreaView style={globalStyles.safeArea}>
+      <StatusBar backgroundColor={'#1C2137'} />
+
       <View style={[globalStyles.container]}>
         <Text
           style={[

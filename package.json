@@ -34,7 +34,8 @@
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-svg": "^12.3.0",
     "react-native-table-component": "https://github.com/slice312/react-native-table-component.git",
-    "react-native-vector-icons": "^9.1.0"
+    "react-native-vector-icons": "^9.1.0",
+    "react-native-virtualized-view": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

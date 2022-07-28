@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput } from 'react-native'
+import { View, Text, TextInput, StatusBar } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
 import { ButtonComponent, PopInCalculImc, VuMeterComponent } from '../components/'
@@ -55,6 +55,8 @@ const ImcCalcul = (props: ImcProps) => {
 
   return (
     <SafeAreaView style={globalStyles.safeArea}>
+      <StatusBar backgroundColor={'#1C2137'} />
+
       <View style={globalStyles.container}>
         <Text
           style={[

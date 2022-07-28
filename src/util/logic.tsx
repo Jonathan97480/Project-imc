@@ -546,6 +546,20 @@ class Logic {
       })
     })
   }
+
+  static getDate(data: custom.dataBaseImcTable[]) {
+    const ListDate: string[] = []
+
+    data.forEach(element => {
+      const arrayDate = element.date.split('/')
+      const year = arrayDate[0]
+      const month = arrayDate[1]
+      const day = arrayDate[2]
+
+      ListDate.push(`${day}/${month}/${year}`)
+    })
+    return ListDate
+  }
 }
 
 export default Logic

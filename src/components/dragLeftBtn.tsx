@@ -65,7 +65,7 @@ const DragLeftBtn = (props: DragLeftBtnProps) => {
           simultaneousHandlers={props.simultaneousHandlers}
           onGestureEvent={panGesture}>
           <Animated.View style={[rStyle, styles.content]}>
-            {props.profile.user_avatar === '' ? (
+            {props.profile.user_avatar === '' || props.profile.user_avatar === null ? (
               <Image
                 style={styles.avatar}
                 source={
