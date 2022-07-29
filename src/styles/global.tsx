@@ -71,6 +71,9 @@ const globalStyles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     marginBottom: 10,
+    width: '100%',
+    height: 20,
+    lineHeight: 21,
   },
   blockInputInput: {
     backgroundColor: '#191E34',

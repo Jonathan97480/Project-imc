@@ -108,7 +108,11 @@ const AddProfile = (props: HomeProps) => {
           <Text style={[globalStyles.title, globalStyles.gap40]}>Éditer votre profil</Text>
           <AddAvatar profile={profile} setProfile={setProfile} />
           <View style={[globalStyles.blockInput, globalStyles.gap30]}>
-            <Text style={globalStyles.blockInputLabel}>Nom</Text>
+            <View style={{ height: 20, width: '100%', flexDirection: 'row', marginBottom: 4 }}>
+              <Image source={require('../assets/img/icon_user.png')} style={{ marginRight: 4 }} />
+              <Text style={[globalStyles.blockInputLabel]}>Nom</Text>
+            </View>
+
             <TextInput
               value={profile.user_name}
               style={[
@@ -128,7 +132,13 @@ const AddProfile = (props: HomeProps) => {
             />
           </View>
           <View style={[globalStyles.blockInput, globalStyles.gap30]}>
-            <Text style={globalStyles.blockInputLabel}>Taille</Text>
+            <View style={{ height: 20, width: '100%', flexDirection: 'row', marginBottom: 4 }}>
+              <Image
+                source={require('../assets/img/icon_userSize.png')}
+                style={{ marginRight: 4 }}
+              />
+              <Text style={globalStyles.blockInputLabel}>Taille</Text>
+            </View>
             <TextInput
               value={profile.user_size.toString()}
               style={[
@@ -150,7 +160,13 @@ const AddProfile = (props: HomeProps) => {
             />
           </View>
           <View style={[globalStyles.blockInput, globalStyles.gap30]}>
-            <Text style={globalStyles.blockInputLabel}>Age</Text>
+            <View style={{ height: 20, width: '100%', flexDirection: 'row', marginBottom: 4 }}>
+              <Image
+                source={require('../assets/img/icon_userSize.png')}
+                style={{ marginRight: 4 }}
+              />
+              <Text style={globalStyles.blockInputLabel}>Age</Text>
+            </View>
             <TextInput
               value={profile.user_age.toString()}
               style={[

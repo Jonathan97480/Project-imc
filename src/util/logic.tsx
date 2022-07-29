@@ -89,16 +89,11 @@ class Logic {
   ) => {
     new Promise((_resolve, _reject) => {
       try {
+        const date = `${_date.year}/${_date.month}/${_date.day}`
         _db.transaction(tx => {
           tx.executeSql(
             'INSERT INTO imc (user_id, user_name, user_poids, user_imc, imc_date) VALUES (?,?,?,?,?)',
-            [
-              _profile?.id,
-              _profile?.user_name,
-              _poids.toString(),
-              _imc.toString(),
-              `${_date.year + '/' + _date.month + '/' + _date.day}`,
-            ],
+            [_profile?.id, _profile?.user_name, _poids.toString(), _imc.toString(), date],
             (tx, result) => {
               _resolve(result)
             },
@@ -138,7 +133,9 @@ class Logic {
     let result: number = poids / value1
 
     result = Math.round(result * 100) / 100
+
     result = parseInt(result.toString().split('.')[1])
+
     /*  console.info(result, 'result') */
 
     return result
@@ -152,11 +149,12 @@ class Logic {
       year: number
     },
   ): Promise<{ user?: UserProfile | null; error?: string | null }> => {
+    const date = `${_date.year}/${_date.month}/${_date.day}`
     return await new Promise((_resolve, _reject) => {
       _db.transaction(_ty => {
         _ty.executeSql(
           `SELECT * FROM imc WHERE imc_date =? AND user_id =? `,
-          [`${_date.year + '/' + _date.month + '/' + _date.day}`, _idUser],
+          [date, _idUser],
           (_tx, _result) => {
             if (_result.rows.item.length > 0) {
               for (let index = 0; index < _result.rows.item.length; index++) {

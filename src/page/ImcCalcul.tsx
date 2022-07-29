@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput, StatusBar } from 'react-native'
+import { View, Text, TextInput, StatusBar, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
-import { ButtonComponent, PopInCalculImc, VuMeterComponent } from '../components/'
+import { ButtonComponent, PopIn, PopInCalculImc, VuMeterComponent } from '../components/'
 import { UserProfile } from '../interfaces'
 import globalStyles from '../styles/global'
 import Logic from '../util/logic'
@@ -12,28 +12,31 @@ interface ImcProps {
 
   db: SQLiteDatabase
   updateHistorique: (val) => void
+  navigation: any
 }
+const curentDate = new Date()
 
 const date = {
-  day: new Date().getDate(),
-  month: new Date().getMonth() + 1,
-  year: new Date().getFullYear(),
+  day: curentDate.getDate(),
+  month: curentDate.getMonth() + 1,
+  year: curentDate.getFullYear(),
 }
 const ImcCalcul = (props: ImcProps) => {
   const { profile, db } = props
   const [imc, setImc] = React.useState(0)
   const [poids, setPoids] = React.useState(0)
   const [showPopin, setShowPopin] = useState({ active: false, idEntry: 0 })
-
+  const [showPopInAlert, setShowPopInAlert] = useState(false)
   const handlePoids = (event: any) => {
     if (event.nativeEvent.text === 'Na' || event.nativeEvent.text === '') {
       setPoids(0)
     } else {
-      setPoids(parseFloat(event.nativeEvent.text))
+      setPoids(parseInt(event.nativeEvent.text))
     }
   }
 
   const handleImc = () => {
+    console.log(profile)
     if (profile?.user_size != undefined && poids != 0) {
       /* Check user is value exit for today */
       Logic.checkEnterExistForDate(db, profile.id, date).then(_result => {
@@ -49,14 +52,34 @@ const ImcCalcul = (props: ImcProps) => {
         }
       })
     } else {
-      throw new Error('Veuillez renseigner votre votre poids')
+      setShowPopInAlert(true)
     }
   }
 
   return (
     <SafeAreaView style={globalStyles.safeArea}>
       <StatusBar backgroundColor={'#1C2137'} />
-
+      <View>
+        <PopIn
+          title="Poids non renseigner"
+          open={showPopInAlert}
+          close={() => setShowPopInAlert(false)}>
+          <Text style={[globalStyles.textCenter, globalStyles.paragraphe, globalStyles.gap20]}>
+            Veuillez renseigner votre votre poids pour effectuez le calcul de votre imc{' '}
+          </Text>
+          <ButtonComponent
+            style={[
+              globalStyles.gap40,
+              globalStyles.ButtonStyle,
+              { width: 300, backgroundColor: '#193427' },
+            ]}
+            onPress={() => {
+              setShowPopInAlert(false)
+            }}>
+            <Text style={[globalStyles.btnText]}>Ok</Text>
+          </ButtonComponent>
+        </PopIn>
+      </View>
       <View style={globalStyles.container}>
         <Text
           style={[
@@ -140,17 +163,31 @@ const ImcCalcul = (props: ImcProps) => {
         <ButtonComponent
           style={globalStyles.ButtonStyle}
           onPress={() => {
-            handleImc()
+            if (imc !== 0) {
+              props.navigation.navigate('STATE INFO')
+            } else {
+              handleImc()
+            }
           }}>
-          <Text
-            style={[
-              globalStyles.textColorPrimary,
-              globalStyles.textSize16,
-              globalStyles.textBold,
-              globalStyles.textCenter,
-            ]}>
-            Calculer
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <Image
+              source={
+                imc === 0
+                  ? require('../assets/img/icon_calclBtn.png')
+                  : require('../assets/img/icon_btnStat.png')
+              }
+              style={{ width: 20, height: 20, marginRight: 4 }}
+            />
+            <Text
+              style={[
+                globalStyles.textColorPrimary,
+                globalStyles.textSize16,
+                globalStyles.textBold,
+                globalStyles.textCenter,
+              ]}>
+              {imc === 0 ? 'Calculer' : 'Voir les statistiques'}
+            </Text>
+          </View>
         </ButtonComponent>
       </View>
     </SafeAreaView>

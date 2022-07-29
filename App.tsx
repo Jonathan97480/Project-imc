@@ -26,7 +26,7 @@ const App = () => {
     { date: string; poids: number; imc: number }[] | null
   >(null)
   const updateHistorique = (profile: UserProfile) => {
-    getHistoriqueUser(profile, 2022)
+    getHistoriqueUser(profile)
       .then(historique => {
         setHistorique(historique)
       })
@@ -110,7 +110,9 @@ function HomeTabs(props: HomeTabsProps) {
           tabBarActiveBackgroundColor: '#1E1E1E',
           tabBarIcon: ({ color }) => <Icon name="calculator" size={20} color="#fff" />,
         }}>
-        {props => <ImcCalcul db={db} profile={curentUser} updateHistorique={updateHistorique} />}
+        {props => (
+          <ImcCalcul db={db} profile={curentUser} updateHistorique={updateHistorique} {...props} />
+        )}
       </Tab.Screen>
       <Tab.Screen
         name="STATE INFO"

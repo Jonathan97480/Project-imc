@@ -90,7 +90,7 @@ const VuMeterComponent = (props: DialProps) => {
             fontSize: 78,
             color: '#fff',
           }}>
-          {props.percent * 100}
+          {(props.percent * 100).toFixed(2)}
         </Text>
       </View>
     </View>
