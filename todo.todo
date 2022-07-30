@@ -14,7 +14,8 @@ screen:
       - prévoir un bouton pour relancer le calcul
      
   - Apropos:
-      - Crée l'écran d'apropos
+      - Crée l'écran d'apropos @done
+      - Crée les mentions légales @done
       
   - StateInfo:
       - Ajouter le tableau des diférentes messures fait sur le temps @done
@@ -27,10 +28,10 @@ screen:
 
 bug:
   - fixer le bug dans calculImc quand on click sur le bouton sans entrée de valeur génére un bug sur le mobile @done
-  - fixer bug quand sort d'un profil existant et que on veux crée un nouveau profil n'affiche pas le choix du sexe pour le nouvelle utillisateur
-  - bug quand on prend une photo ou que on la choisit dans la galerie na parait pas 
+  - fixer bug quand sort d'un profil existant et que on veux crée un nouveau profil n'affiche pas le choix du sexe pour le nouvelle utillisateur @done
+  - bug quand on prend une photo ou que on la choisit dans la galerie na parait pas @done
   - bug pour le calcul de imc les donées sauvgarder na paraisse pas dans les state
-  - fixer le bug du component avat qui n'afiche pas les file pour les photos
+  - fixer le bug du component avat qui n'afiche pas les file pour les photos @done
 
 Data:
     - génerer un jeu de données pour les tests sur 3 ans et sur 3 profil fictive @done

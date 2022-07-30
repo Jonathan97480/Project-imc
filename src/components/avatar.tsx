@@ -21,6 +21,7 @@ const Avatar = (props: AvatarProps) => {
         />
       ) : (
         <Image
+          style={styles.avatar}
           source={{
             uri: profile?.user_avatar,
           }}

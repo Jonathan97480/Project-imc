@@ -250,7 +250,21 @@ const AddAvatar = (props: AddAvatarProps) => {
   return (
     <View style={[{ justifyContent: 'center', alignItems: 'center' }, globalStyles.gap40]}>
       <Pressable onPress={() => setShowPopIn(true)}>
-        <Image source={require('../assets/img/uploadPicIcon.png')} />
+        {profile.user_avatar === '' && (
+          <Image source={require('../assets/img/uploadPicIcon.png')} />
+        )}
+        {profile.user_avatar !== '' && (
+          <Image
+            style={{
+              width: 87,
+              height: 87,
+              borderRadius: 87 / 2,
+            }}
+            source={{
+              uri: profile?.user_avatar,
+            }}
+          />
+        )}
       </Pressable>
 
       {showPopIn && (
@@ -320,6 +334,7 @@ const PopInAddAvatar = (props: PopInAddAvatarProps) => {
           } catch (err) {
             console.warn(err)
           }
+          setShowPopIn(false)
         }}>
         <Image source={require('../assets/img/camera.png')} />
 
@@ -372,6 +387,7 @@ const PopInAddAvatar = (props: PopInAddAvatarProps) => {
           } catch (err) {
             console.warn(err)
           }
+          setShowPopIn(false)
         }}>
         <Image source={require('../assets/img/galerie.png')} />
         <Text style={[globalStyles.btnText, { textAlign: 'center', width: '80%' }]}>Galerie</Text>

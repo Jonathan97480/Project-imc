@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/indent */
-import { Home, AddProfile, Profile, ImcCalcul, StateInfo } from './src/page'
+import { Home, AddProfile, Profile, ImcCalcul, StateInfo, About } from './src/page'
 import React, { useEffect, useState } from 'react'
 import { dbInit, createTable } from './src/util/model'
 import { NavigationContainer } from '@react-navigation/native'
@@ -40,7 +40,12 @@ const App = () => {
     createImcDataBase(db)
   }, [])
 
-  const handleProfile = (profile: UserProfile) => {
+  const handleProfile = (profile: UserProfile | null) => {
+    if (profile === null) {
+      curentUser = null
+      setHistorique(null)
+      return
+    }
     curentUser = profile
     updateHistorique(profile)
   }
@@ -73,6 +78,9 @@ const App = () => {
                 historique={historique}
               />
             )}
+          </Stack.Screen>
+          <Stack.Screen options={{ headerShown: false }} name="About">
+            {props => <About {...props} />}
           </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>

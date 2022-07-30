@@ -10,7 +10,7 @@ import Logic from '../util/logic'
 interface HomeProps {
   db: SQLiteDatabase
   navigation: any
-  handleProfile: (profile: UserProfile) => void
+  handleProfile: (profile: UserProfile | null) => void
 }
 
 const Home = (props: HomeProps) => {
@@ -51,7 +51,7 @@ interface CurentScreenProps {
   _db: SQLiteDatabase
   _setProfile: (p: UserProfile[]) => void
   navigation: any
-  handleProfile: (profile: UserProfile) => void
+  handleProfile: (profile: UserProfile | null) => void
 }
 
 const CurentScreen = (props: CurentScreenProps) => {
@@ -91,6 +91,7 @@ const CurentScreen = (props: CurentScreenProps) => {
           <ButtonComponent
             style={[globalStyles.ButtonStyle, globalStyles.gap20]}
             onPress={() => {
+              props.handleProfile(null)
               props.navigation.navigate('Add Profile')
             }}>
             <Text style={globalStyles.btnText}>Ajouter un profil</Text>
@@ -107,6 +108,9 @@ const CurentScreen = (props: CurentScreenProps) => {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
+            }}
+            onPress={() => {
+              props.navigation.navigate('About')
             }}>
             <Image source={require('../assets/img/icon_apropos.png')} style={{ marginRight: 10 }} />
             <Text style={[globalStyles.btnText, { textDecorationLine: 'underline' }]}>
