@@ -88,23 +88,27 @@ class Logic {
     _db: SQLiteDatabase,
   ) => {
     new Promise((_resolve, _reject) => {
-      try {
-        const date = `${_date.year}/${_date.month}/${_date.day}`
-        _db.transaction(tx => {
-          tx.executeSql(
-            'INSERT INTO imc (user_id, user_name, user_poids, user_imc, imc_date) VALUES (?,?,?,?,?)',
-            [_profile?.id, _profile?.user_name, _poids.toString(), _imc.toString(), date],
-            (tx, result) => {
-              _resolve(result)
-            },
-            error => {
-              _reject(error)
-            },
-          )
-        })
-      } catch (error) {
-        throw new Error(error)
+      let stringDay = _date.day.toString()
+      let stringMonth = _date.month.toString()
+      if (_date.day < 10) {
+        stringDay = `0${_date.day}`
       }
+      if (_date.month < 10) {
+        stringMonth = `0${_date.month}`
+      }
+      const date = `${_date.year}/${stringMonth}/${stringDay}`
+      _db.transaction(tx => {
+        tx.executeSql(
+          'INSERT INTO imc (user_id, user_name, user_poids, user_imc, imc_date) VALUES (?,?,?,?,?)',
+          [_profile?.id, _profile?.user_name, _poids.toString(), _imc.toString(), date],
+          (tx, result) => {
+            _resolve(result)
+          },
+          error => {
+            _reject(error)
+          },
+        )
+      })
     })
   }
   static updateImc = async (
@@ -149,7 +153,15 @@ class Logic {
       year: number
     },
   ): Promise<{ user?: UserProfile | null; error?: string | null }> => {
-    const date = `${_date.year}/${_date.month}/${_date.day}`
+    let stringDay = _date.day.toString()
+    let stringMonth = _date.month.toString()
+    if (_date.day < 10) {
+      stringDay = `0${_date.day}`
+    }
+    if (_date.month < 10) {
+      stringMonth = `0${_date.month}`
+    }
+    const date = `${_date.year}/${stringMonth}/${stringDay}`
     return await new Promise((_resolve, _reject) => {
       _db.transaction(_ty => {
         _ty.executeSql(

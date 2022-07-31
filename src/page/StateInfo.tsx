@@ -3,6 +3,8 @@ import { View, Text, StatusBar } from 'react-native'
 import { custom, UserProfile } from '../interfaces'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import Icon from 'react-native-vector-icons/FontAwesome'
+
 import {
   Avatar,
   ButtonComponent,
@@ -15,6 +17,7 @@ import {
 import globalStyles from '../styles/global'
 import Logic from '../util/logic'
 import { ScrollView } from 'react-native-virtualized-view'
+
 interface ImcProps {
   profile: UserProfile | null
 
@@ -25,15 +28,15 @@ interface ImcProps {
 
 const StateInfo = (props: ImcProps) => {
   const { profile, historique } = props
+  console.log(historique, 'historique')
   const [data2, setData2] = React.useState<custom.dataBaseImcTable[]>(historique ? historique : [])
   useEffect(() => {
     if (historique) {
       setData2(historique)
     }
   }, [historique])
-  /* TODO: a remplacer par un écran ou un component */
-  if (data2 === null || data2.length <= 0)
-    return <Text>Aucune donnée disponible pour le moment</Text>
+  if (data2 === null || data2.length <= 0) return <NoData {...props} />
+
   const days = Logic.getDays(data2)
   const [poids, setPoids] = useState(Logic.returnPoids(data2))
   const [imc, setImc] = useState(Logic.returnImc(data2))
@@ -157,6 +160,36 @@ const StateInfo = (props: ImcProps) => {
           }}
         />
       </ScrollView>
+    </SafeAreaView>
+  )
+}
+
+const NoData = (props: any) => {
+  return (
+    <SafeAreaView
+      style={[
+        globalStyles.safeArea,
+        { height: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' },
+      ]}>
+      <StatusBar backgroundColor={'#1C2137'} />
+
+      <View
+        style={{
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Icon name="bar-chart" size={100} color="#fff" style={globalStyles.gap20} />
+        <Text style={[globalStyles.paragraphe, globalStyles.gap20]}>
+          Aucune donnée disponible veuillez faire le calcul de votre imc pour avoir vos premiere
+          donnée
+        </Text>
+        <ButtonComponent
+          style={globalStyles.ButtonStyle}
+          onPress={() => props.navigation.navigate('IMC CALCUL')}>
+          <Text style={[globalStyles.btnText, { width: 300 }]}>Calculer</Text>
+        </ButtonComponent>
+      </View>
     </SafeAreaView>
   )
 }

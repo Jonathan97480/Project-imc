@@ -42,11 +42,15 @@ const ImcCalcul = (props: ImcProps) => {
       Logic.checkEnterExistForDate(db, profile.id, date).then(_result => {
         if (!_result.user) {
           const newImc = Logic.calculImc(profile, poids)
-          Logic.insertImc(profile, poids, newImc, date, db).then(() => {
-            setPoids(0)
-            setImc(newImc)
-            props.updateHistorique(profile)
-          })
+          Logic.insertImc(profile, poids, newImc, date, db)
+            .then(() => {
+              setPoids(0)
+              setImc(newImc)
+              props.updateHistorique(profile)
+            })
+            .catch(err => {
+              console.log(err)
+            })
         } else {
           setShowPopin({ active: true, idEntry: _result.user.id })
         }

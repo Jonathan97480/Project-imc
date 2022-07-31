@@ -200,11 +200,12 @@ async function getHistoriqueUser(
   profile: UserProfile,
 ): Promise<{ date: string; poids: number; imc: number }[]> {
   const curentDate = new Date()
-  const currentDay = curentDate.getDate()
+  const currentDay = curentDate.getDate() + 1
   const currentMonth = curentDate.getMonth() + 1
   const currentYear = curentDate.getFullYear()
   let stringMonth = currentMonth.toString()
   let stringDay = currentDay.toString()
+
   if (currentMonth.toString().length === 1) {
     stringMonth = '0' + currentMonth.toString()
   }
@@ -222,13 +223,14 @@ async function getHistoriqueUser(
     end: `${currentYear}/${stringMonth}/${stringDay}`,
     start: `${currentYear}/${stringMonth}/${startDay}`,
   }
+  console.log(dateIntervalle, 'DATE INTERVALE')
   return new Promise<{ date: string; poids: number; imc: number }[]>((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
         `SELECT * FROM imc WHERE imc_date BETWEEN  '${dateIntervalle.start}'  AND  '${dateIntervalle.end}' AND user_id = ${profile.id} ORDER BY imc_date ASC`,
         [],
         (tx, results) => {
-          console.log(results, 'result imc table')
+          console.log(results, 'GET HISTORIQUE')
           const len = results.rows.length
           const list: { date: string; poids: number; imc: number }[] = []
 

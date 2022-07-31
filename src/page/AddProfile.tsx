@@ -193,43 +193,30 @@ const AddProfile = (props: HomeProps) => {
               if (profile.user_name === '' || profile.user_size === 0 || profile.user_age === 0) {
                 alert('Veuillez remplir tous les champs')
               } else {
-                try {
-                  db.transaction(tx => {
-                    tx.executeSql(
-                      'INSERT INTO profile (user_name, user_sexe, user_age, user_size, user_avatar) VALUES (?,?,?,?,?)',
-                      [
-                        profile.user_name,
-                        profile.user_sexe,
-                        profile.user_age,
-                        profile.user_size,
-                        profile.user_avatar,
-                      ],
-                      (tx, results) => {
-                        handleProfile({
-                          user_name: profile.user_name,
-                          user_sexe: profile.user_sexe,
-                          user_age: profile.user_age,
-                          user_size: profile.user_size,
-                          user_avatar: profile.user_avatar,
-                          id: results.insertId,
-                        })
-
-                        navigation.reset({
-                          index: 0,
-                          routes: [{ name: 'PROFILE' }],
-                        })
-                      },
-                      error => {
-                        throw new Error(error.toString())
-                      },
-                    )
+                if (profile.id === null) {
+                  AddProfileDb(db, profile).then(_profile => {
+                    setProfile(_profile)
+                    handleProfile(_profile)
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'PROFILE' }],
+                    })
                   })
-                } catch (err) {
-                  console.warn(err)
+                } else {
+                  UpdateProfileDb(db, profile).then(_profile => {
+                    setProfile(_profile)
+                    handleProfile(_profile)
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'PROFILE' }],
+                    })
+                  })
                 }
               }
             }}>
-            <Text style={[globalStyles.btnText, globalStyles.textSize16]}>Valider</Text>
+            <Text style={[globalStyles.btnText, globalStyles.textSize16]}>
+              {profile.id ? 'Mettre a jour votre profil' : 'Valider'}
+            </Text>
           </ButtonComponent>
         </View>
       </SafeAreaView>
@@ -394,4 +381,64 @@ const PopInAddAvatar = (props: PopInAddAvatarProps) => {
       </ButtonComponent>
     </PopIn>
   )
+}
+
+async function AddProfileDb(db: SQLiteDatabase, profile: UserProfile): Promise<UserProfile> {
+  return await new Promise<UserProfile>((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'INSERT INTO profile (user_name, user_sexe, user_age, user_size, user_avatar) VALUES (?,?,?,?,?)',
+        [
+          profile.user_name,
+          profile.user_sexe,
+          profile.user_age,
+          profile.user_size,
+          profile.user_avatar,
+        ],
+        (tx, results) => {
+          resolve({
+            user_name: profile.user_name,
+            user_sexe: profile.user_sexe,
+            user_age: profile.user_age,
+            user_size: profile.user_size,
+            user_avatar: profile.user_avatar,
+            id: results.insertId,
+          })
+        },
+        error => {
+          reject(error)
+        },
+      )
+    })
+  })
+}
+async function UpdateProfileDb(db: SQLiteDatabase, profile: UserProfile): Promise<UserProfile> {
+  return await new Promise<UserProfile>((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE profile SET user_name=?, user_sexe=?, user_age=?, user_size=?, user_avatar=? WHERE id=?',
+        [
+          profile.user_name,
+          profile.user_sexe,
+          profile.user_age,
+          profile.user_size,
+          profile.user_avatar,
+          profile.id,
+        ],
+        (tx, results) => {
+          resolve({
+            user_name: profile.user_name,
+            user_sexe: profile.user_sexe,
+            user_age: profile.user_age,
+            user_size: profile.user_size,
+            user_avatar: profile.user_avatar,
+            id: profile.id,
+          })
+        },
+        error => {
+          reject(error)
+        },
+      )
+    })
+  })
 }
