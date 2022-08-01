@@ -44,6 +44,10 @@ async function CreateUser(db: SQLiteDatabase): Promise<UserProfile> {
       user_sexe: _newSexe,
       user_age: _newAge,
       user_size: _newSize,
+      user_poids_start: 0,
+      user_poids_end: 0,
+      user_imc_start: 0,
+      user_imc_end: 0,
       user_avatar: undefined,
     }
 
@@ -86,6 +90,10 @@ async function createEntries(
       user_name: '',
       user_sexe: '',
       user_age: 0,
+      user_poids_start: 0,
+      user_poids_end: 0,
+      user_imc_start: 0,
+      user_imc_end: 0,
       user_avatar: undefined,
     },
     _newPoids,

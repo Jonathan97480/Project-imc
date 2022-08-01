@@ -58,14 +58,32 @@ const Profile = (props: ProfileProps) => {
               {profile?.user_size} cm
             </Text>
           </View>
-          {/*  <View style={[styles.containerInfo, globalStyles.gap40,]}>
-            <Text  style={[
+          <View style={[styles.containerInfo, globalStyles.gap40]}>
+            <Text
+              style={[
                 globalStyles.textColorPrimary,
                 globalStyles.textSize16,
                 globalStyles.textLight,
-              ]}>Votre poids</Text>
-            <Text  style={[globalStyles.textColorPrimary, { fontSize: 20 }, globalStyles.textBold]}>{profile?.us}</Text>
-          </View> */}
+              ]}>
+              Votre poids de départ
+            </Text>
+            <Text style={[globalStyles.textColorPrimary, { fontSize: 20 }, globalStyles.textBold]}>
+              {profile?.user_poids_start} kg
+            </Text>
+          </View>
+          <View style={[styles.containerInfo, globalStyles.gap40]}>
+            <Text
+              style={[
+                globalStyles.textColorPrimary,
+                globalStyles.textSize16,
+                globalStyles.textLight,
+              ]}>
+              Votre IMC de départ
+            </Text>
+            <Text style={[globalStyles.textColorPrimary, { fontSize: 20 }, globalStyles.textBold]}>
+              {profile?.user_imc_start}
+            </Text>
+          </View>
           <View style={styles.containerInfo}>
             <Text
               style={[

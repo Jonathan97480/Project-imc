@@ -157,12 +157,16 @@ function createProfileDataBase(db: SQLiteDatabase) {
         'id INTEGER PRIMARY KEY AUTOINCREMENT',
         'user_name VARCHAR(100)',
         'user_avatar TEXT',
-        ' user_size INTEGER',
+        'user_size INTEGER',
         'user_age INTEGER',
         'user_sexe TEXT',
+        'user_poids_start FLOAT',
+        'user_poids_end FLOAT',
+        'user_imc_start FLOAT',
+        'user_imc_end  FLOAT',
       ],
       (result: ResultSet) => {
-        console.log(result)
+        console.info(result.rowsAffected.toString(), 'ROWS AFFECTED ADD TABLE PROFILE')
       },
     )
   } catch (error) {
@@ -183,12 +187,12 @@ function createImcDataBase(db: SQLiteDatabase) {
         'id INTEGER PRIMARY KEY AUTOINCREMENT',
         'user_id INTEGER',
         'user_name VARCHAR(100)',
-        'user_poids INTEGER',
-        'user_imc INTEGER',
+        'user_poids FLOAT',
+        'user_imc FLOAT',
         'imc_date DATE',
       ],
       (result: ResultSet) => {
-        console.log(result)
+        console.info(result.rowsAffected.toString(), 'ROWS AFFECTED ADD TABLE IMC')
       },
     )
   } catch (error) {

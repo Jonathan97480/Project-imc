@@ -1,6 +1,6 @@
 import { rgbaColor } from '@shopify/react-native-skia'
 import React from 'react'
-import { Pressable, SafeAreaView, StatusBar, Text, View, Linking, Modal } from 'react-native'
+import { Pressable, SafeAreaView, StatusBar, Text, View, Modal } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Card, ButtonComponent, BtnBackCircle } from '../components'
 

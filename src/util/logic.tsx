@@ -51,9 +51,23 @@ class Logic {
           [],
           (_tx, _results) => {
             const profile: UserProfile[] = []
+            console.info('ALL PROFILE LOADED')
+            console.log(_results, 'element')
             for (let index = 0; index < _results.rows.length; index++) {
-              const element: UserProfile = _results.rows.item(index)
-              profile.push(element)
+              const element = _results.rows.item(index)
+
+              profile.push({
+                id: element.id,
+                user_age: element.user_age,
+                user_avatar: element.user_avatar,
+                user_name: element.user_name,
+                user_poids_start: element.user_poids_start,
+                user_poids_end: element.user_poids_end,
+                user_imc_end: element.user_imc_end,
+                user_imc_start: element.user_imc_start,
+                user_sexe: element.user_sexe,
+                user_size: element.user_size,
+              })
             }
 
             _resolve(profile)
@@ -72,6 +86,10 @@ class Logic {
       user_age: 0,
       user_size: 0,
       user_avatar: '',
+      user_poids_start: 0,
+      user_poids_end: 0,
+      user_imc_start: 0,
+      user_imc_end: 0,
     }
 
     return newProfile

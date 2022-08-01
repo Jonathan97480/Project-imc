@@ -165,6 +165,34 @@ const AddProfile = (props: HomeProps) => {
                 source={require('../assets/img/icon_userSize.png')}
                 style={{ marginRight: 4 }}
               />
+              <Text style={globalStyles.blockInputLabel}>Votre poids en Kg</Text>
+            </View>
+            <TextInput
+              value={profile.user_poids_start.toString()}
+              style={[
+                globalStyles.blockInput,
+                {
+                  backgroundColor: '#191E34',
+                  paddingLeft: 10,
+                  color: '#fff',
+                },
+              ]}
+              onChangeText={text => {
+                if (isNaN(parseInt(text)) || text === '') text = '0'
+                setProfile({
+                  ...profile,
+                  user_poids_start: parseInt(text),
+                })
+              }}
+              keyboardType="numeric"
+            />
+          </View>
+          <View style={[globalStyles.blockInput, globalStyles.gap30]}>
+            <View style={{ height: 20, width: '100%', flexDirection: 'row', marginBottom: 4 }}>
+              <Image
+                source={require('../assets/img/icon_userSize.png')}
+                style={{ marginRight: 4 }}
+              />
               <Text style={globalStyles.blockInputLabel}>Age</Text>
             </View>
             <TextInput
@@ -190,10 +218,26 @@ const AddProfile = (props: HomeProps) => {
           <ButtonComponent
             style={globalStyles.ButtonStyle}
             onPress={() => {
-              if (profile.user_name === '' || profile.user_size === 0 || profile.user_age === 0) {
+              if (
+                profile.user_name === '' ||
+                profile.user_size === 0 ||
+                profile.user_age === 0 ||
+                profile.user_poids_start === 0
+              ) {
                 alert('Veuillez remplir tous les champs')
               } else {
-                if (profile.id === null) {
+                let imc = 0
+                if (profile.user_poids_start !== 0) {
+                  imc = Logic.calculImc(profile, profile.user_poids_start)
+                } else {
+                  alert('Veuillez entrer votre poids de départ différent de 0')
+                  return
+                }
+                if (profile.id === null || profile.id === 0) {
+                  /* calcul imc start */
+
+                  profile.user_imc_start = imc
+
                   AddProfileDb(db, profile).then(_profile => {
                     setProfile(_profile)
                     handleProfile(_profile)
@@ -203,6 +247,7 @@ const AddProfile = (props: HomeProps) => {
                     })
                   })
                 } else {
+                  profile.user_imc_start = imc
                   UpdateProfileDb(db, profile).then(_profile => {
                     setProfile(_profile)
                     handleProfile(_profile)
@@ -385,27 +430,38 @@ const PopInAddAvatar = (props: PopInAddAvatarProps) => {
 
 async function AddProfileDb(db: SQLiteDatabase, profile: UserProfile): Promise<UserProfile> {
   return await new Promise<UserProfile>((resolve, reject) => {
+    console.log('AddProfileDb', profile)
     db.transaction(tx => {
       tx.executeSql(
-        'INSERT INTO profile (user_name, user_sexe, user_age, user_size, user_avatar) VALUES (?,?,?,?,?)',
+        'INSERT INTO profile (user_name, user_sexe, user_age, user_size, user_avatar, user_poids_start, user_poids_end, user_imc_start, user_imc_end) VALUES (?,?,?,?,?,?,?,?,?)',
         [
           profile.user_name,
           profile.user_sexe,
           profile.user_age,
           profile.user_size,
           profile.user_avatar,
+          profile.user_poids_start,
+          profile.user_poids_end,
+          profile.user_imc_start,
+          profile.user_imc_end,
         ],
         (tx, results) => {
+          console.info(results, 'Inserted profile')
           resolve({
             user_name: profile.user_name,
             user_sexe: profile.user_sexe,
             user_age: profile.user_age,
             user_size: profile.user_size,
             user_avatar: profile.user_avatar,
+            user_poids_start: profile.user_poids_start,
+            user_poids_end: profile.user_poids_end,
+            user_imc_start: profile.user_imc_start,
+            user_imc_end: profile.user_imc_end,
             id: results.insertId,
           })
         },
         error => {
+          console.error(error, 'Error inserting profile')
           reject(error)
         },
       )
@@ -416,13 +472,17 @@ async function UpdateProfileDb(db: SQLiteDatabase, profile: UserProfile): Promis
   return await new Promise<UserProfile>((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'UPDATE profile SET user_name=?, user_sexe=?, user_age=?, user_size=?, user_avatar=? WHERE id=?',
+        'UPDATE profile SET user_name=?, user_sexe=?, user_age=?, user_size=?, user_avatar=?, user_poids_start=?, user_poids_end=?, user_imc_start=?, user_imc_end=? WHERE id=?',
         [
           profile.user_name,
           profile.user_sexe,
           profile.user_age,
           profile.user_size,
           profile.user_avatar,
+          profile.user_poids_start,
+          profile.user_poids_end,
+          profile.user_imc_start,
+          profile.user_imc_end,
           profile.id,
         ],
         (tx, results) => {
@@ -432,6 +492,10 @@ async function UpdateProfileDb(db: SQLiteDatabase, profile: UserProfile): Promis
             user_age: profile.user_age,
             user_size: profile.user_size,
             user_avatar: profile.user_avatar,
+            user_poids_start: profile.user_poids_start,
+            user_poids_end: profile.user_poids_end,
+            user_imc_start: profile.user_imc_start,
+            user_imc_end: profile.user_imc_end,
             id: profile.id,
           })
         },

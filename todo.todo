@@ -37,5 +37,9 @@ bug:
 Data:
     - génerer un jeu de données pour les tests sur 3 ans et sur 3 profil fictive @done
 newFeature:
+    - Ajouter un poids de dépare en bd @done
+    - Ajouter un imc de dépare en bd @done
+    - Ajoutter un poid voulu en bd @done
+    - ajouter un imc voulu en bd @done
     - Ajouter un encare avec le poids de dépare
     - une fois le calcul fait rajouter une comparaison entre les deuw poids et félicités l'utilisateur si il a perdu du poids
