@@ -34,7 +34,7 @@ const App = () => {
         console.error(err)
       })
   }
-
+  /* populateDataBase(db, 2) */
   useEffect(() => {
     createProfileDataBase(db)
     createImcDataBase(db)

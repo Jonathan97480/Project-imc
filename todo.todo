@@ -2,6 +2,7 @@ screen:
   - home:
       - Ajouter l'icone pour apropos @done
       - Ajouter un bouton pour Ajouter un nouveau profil @done
+      - terminer le btn drag left
   - profile:
       - crée un écran pour éditer sont profil @done
      

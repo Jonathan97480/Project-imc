@@ -1,6 +1,15 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import { View, ViewStyle, ImageStyle, StyleSheet, Dimensions, Image, Text } from 'react-native'
+import {
+  View,
+  ViewStyle,
+  ImageStyle,
+  StyleSheet,
+  Dimensions,
+  Image,
+  Text,
+  TextStyle,
+} from 'react-native'
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -17,6 +26,8 @@ import Animated, {
 } from 'react-native-reanimated'
 import { UserProfile } from '../interfaces'
 import globalStyles from '../styles/global'
+import Icon from 'react-native-vector-icons/FontAwesome'
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 const TRANSLATE_X_THRESHOLD = -SCREEN_WIDTH * 0.3
 interface DragLeftBtnProps extends Pick<PanGestureHandlerProps, 'simultaneousHandlers'> {
@@ -33,10 +44,15 @@ const DragLeftBtn = (props: DragLeftBtnProps) => {
       props.onTap()
     }
   })
+
   const translateX = useSharedValue(0)
   const panGesture = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
     onActive: event => {
-      translateX.value = event.translationX
+      if (event.translationX < 0) {
+        translateX.value = event.translationX
+      } else {
+        translateX.value = 0
+      }
     },
     onEnd: () => {
       const shouldBeDismissed = translateX.value < TRANSLATE_X_THRESHOLD
@@ -48,18 +64,26 @@ const DragLeftBtn = (props: DragLeftBtnProps) => {
       }
     },
   })
+  const rContenteAnimation = useAnimatedStyle(() => {
+    const opacity = withTiming(translateX.value < TRANSLATE_X_THRESHOLD ? 1 : 0)
+    return { opacity }
+  })
   const rStyle = useAnimatedStyle(() => ({
     transform: [
       {
         translateX: translateX.value,
       },
     ],
-    backgroundColor: '#fff',
+    backgroundColor: '#191E34',
+    elevation: 10,
     height: 50,
     width: '100%',
   }))
   return (
     <View style={[styles.container, globalStyles.gap20]}>
+      <Animated.View style={[{ height: 71 }, rContenteAnimation, styles.icon]}>
+        <Icon name="trash-o" size={40} color="red" style={styles.iconFont} />
+      </Animated.View>
       <GestureDetector gesture={Gesture.Exclusive(singleTap)}>
         <PanGestureHandler
           simultaneousHandlers={props.simultaneousHandlers}
@@ -105,11 +129,11 @@ interface Styles {
   container: ViewStyle
   content: ViewStyle
   avatar: ImageStyle
+  icon: ViewStyle
+  iconFont: TextStyle
 }
 const styles = StyleSheet.create<Styles>({
   container: {
-    elevation: 10,
-    backgroundColor: 'red',
     margin: 10,
     height: 71,
     borderRadius: 5,
@@ -122,13 +146,25 @@ const styles = StyleSheet.create<Styles>({
     height: '100%',
     width: '100%',
     borderRadius: 5,
-    backgroundColor: '#191E34',
   },
   avatar: {
     width: 47,
     height: 47,
     borderRadius: 50,
     marginRight: 20,
+  },
+  icon: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    borderRadius: 5,
+    width: '100%',
+
+    paddingRight: 30,
+    paddingTop: 15,
+  },
+  iconFont: {
+    textAlign: 'right',
   },
 })
 
