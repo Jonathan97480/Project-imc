@@ -226,9 +226,9 @@ const AddProfile = (props: HomeProps) => {
               ) {
                 alert('Veuillez remplir tous les champs')
               } else {
-                let imc = 0
+                let _result: { imc: number; img: number } = { imc: 0, img: 0 }
                 if (profile.user_poids_start !== 0) {
-                  imc = Logic.calculImc(profile, profile.user_poids_start)
+                  _result = Logic.calculImc(profile, profile.user_poids_start)
                 } else {
                   alert('Veuillez entrer votre poids de départ différent de 0')
                   return
@@ -236,7 +236,8 @@ const AddProfile = (props: HomeProps) => {
                 if (profile.id === null || profile.id === 0) {
                   /* calcul imc start */
 
-                  profile.user_imc_start = imc
+                  profile.user_imc_start = _result.imc
+                  profile.user_img_start = _result.img
 
                   AddProfileDb(db, profile).then(_profile => {
                     setProfile(_profile)
@@ -247,7 +248,8 @@ const AddProfile = (props: HomeProps) => {
                     })
                   })
                 } else {
-                  profile.user_imc_start = imc
+                  profile.user_imc_start = _result.imc
+                  profile.user_img_start = _result.img
                   UpdateProfileDb(db, profile).then(_profile => {
                     setProfile(_profile)
                     handleProfile(_profile)
@@ -433,7 +435,7 @@ async function AddProfileDb(db: SQLiteDatabase, profile: UserProfile): Promise<U
     console.log('AddProfileDb', profile)
     db.transaction(tx => {
       tx.executeSql(
-        'INSERT INTO profile (user_name, user_sexe, user_age, user_size, user_avatar, user_poids_start, user_poids_end, user_imc_start, user_imc_end) VALUES (?,?,?,?,?,?,?,?,?)',
+        'INSERT INTO profile (user_name, user_sexe, user_age, user_size, user_avatar, user_poids_start, user_poids_end, user_imc_start, user_imc_end,user_img_start,user_img_end) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
         [
           profile.user_name,
           profile.user_sexe,
@@ -444,6 +446,8 @@ async function AddProfileDb(db: SQLiteDatabase, profile: UserProfile): Promise<U
           profile.user_poids_end,
           profile.user_imc_start,
           profile.user_imc_end,
+          profile.user_img_start,
+          profile.user_img_end,
         ],
         (tx, results) => {
           console.info(results, 'Inserted profile')
@@ -457,6 +461,8 @@ async function AddProfileDb(db: SQLiteDatabase, profile: UserProfile): Promise<U
             user_poids_end: profile.user_poids_end,
             user_imc_start: profile.user_imc_start,
             user_imc_end: profile.user_imc_end,
+            user_img_start: profile.user_img_start,
+            user_img_end: profile.user_img_end,
             id: results.insertId,
           })
         },
@@ -472,7 +478,7 @@ async function UpdateProfileDb(db: SQLiteDatabase, profile: UserProfile): Promis
   return await new Promise<UserProfile>((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'UPDATE profile SET user_name=?, user_sexe=?, user_age=?, user_size=?, user_avatar=?, user_poids_start=?, user_poids_end=?, user_imc_start=?, user_imc_end=? WHERE id=?',
+        'UPDATE profile SET user_name=?, user_sexe=?, user_age=?, user_size=?, user_avatar=?, user_poids_start=?, user_poids_end=?, user_imc_start=?, user_imc_end=?,user_img_start=?,user_img_end=?  WHERE id=?',
         [
           profile.user_name,
           profile.user_sexe,
@@ -483,6 +489,8 @@ async function UpdateProfileDb(db: SQLiteDatabase, profile: UserProfile): Promis
           profile.user_poids_end,
           profile.user_imc_start,
           profile.user_imc_end,
+          profile.user_img_start,
+          profile.user_img_end,
           profile.id,
         ],
         (tx, results) => {
@@ -496,6 +504,8 @@ async function UpdateProfileDb(db: SQLiteDatabase, profile: UserProfile): Promis
             user_poids_end: profile.user_poids_end,
             user_imc_start: profile.user_imc_start,
             user_imc_end: profile.user_imc_end,
+            user_img_start: profile.user_img_start,
+            user_img_end: profile.user_img_end,
             id: profile.id,
           })
         },

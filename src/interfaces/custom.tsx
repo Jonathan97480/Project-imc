@@ -9,6 +9,7 @@ module custom {
     date: string
     poids: number
     imc: number
+    img: number
   }
 }
 

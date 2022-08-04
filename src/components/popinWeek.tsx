@@ -220,7 +220,12 @@ async function GetDateDataBase(
           for (let index = 0; index < _result.rows.length; index++) {
             const element = _result.rows.item(index)
             /*  console.log(element, 'weekDate') */
-            data.push({ date: element.imc_date, poids: element.user_poids, imc: element.user_imc })
+            data.push({
+              date: element.imc_date,
+              poids: element.user_poids,
+              imc: element.user_imc,
+              img: element.user_img,
+            })
           }
 
           resolve(data)

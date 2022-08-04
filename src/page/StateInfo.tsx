@@ -23,7 +23,7 @@ interface ImcProps {
 
   db: SQLiteDatabase
   updateHistorique: (val) => void
-  historique: { date: string; poids: number; imc: number }[] | null
+  historique: { date: string; poids: number; imc: number; img: number }[] | null
 }
 
 const StateInfo = (props: ImcProps) => {
@@ -40,13 +40,15 @@ const StateInfo = (props: ImcProps) => {
   const days = Logic.getDays(data2)
   const [poids, setPoids] = useState(Logic.returnPoids(data2))
   const [imc, setImc] = useState(Logic.returnImc(data2))
+  const [img, setImg] = useState(Logic.returnImg(data2))
+
   const [labels, setLabels] = useState<string[]>(Logic.getLabelByDay(days))
 
   const [showPopInWeek, setShowPopInWeek] = React.useState(false)
   const [showPopInMonth, setShowPopInMonth] = React.useState(false)
   const [showPopInYear, setShowPopInYear] = React.useState(false)
   const [date, setDate] = React.useState<string[] | undefined>(Logic.getDate(data2))
-
+  console.info(img, 'IMG CHECK')
   const handleWeek = (data: custom.dataBaseImcTable[]) => {
     setShowPopInWeek(false)
     setPoids(Logic.returnPoids(data))
@@ -156,6 +158,7 @@ const StateInfo = (props: ImcProps) => {
             poids: poids,
             imc: imc,
             date: date,
+            img: img,
             label: labels,
           }}
         />

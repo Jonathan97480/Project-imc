@@ -23,7 +23,7 @@ const Stack = createNativeStackNavigator()
 
 const App = () => {
   const [historique, setHistorique] = useState<
-    { date: string; poids: number; imc: number }[] | null
+    { date: string; poids: number; imc: number; img: number }[] | null
   >(null)
   const updateHistorique = (profile: UserProfile) => {
     getHistoriqueUser(profile)
@@ -91,7 +91,7 @@ const App = () => {
 interface HomeTabsProps {
   db: SQLiteDatabase
   updateHistorique: (profile: UserProfile) => void
-  historique: { date: string; poids: number; imc: number }[] | null
+  historique: { date: string; poids: number; imc: number; img: number }[] | null
 }
 
 function HomeTabs(props: HomeTabsProps) {
@@ -164,6 +164,8 @@ function createProfileDataBase(db: SQLiteDatabase) {
         'user_poids_end FLOAT',
         'user_imc_start FLOAT',
         'user_imc_end  FLOAT',
+        'user_img_start FLOAT',
+        'user_img_end FLOAT',
       ],
       (result: ResultSet) => {
         console.info(result.rowsAffected.toString(), 'ROWS AFFECTED ADD TABLE PROFILE')
@@ -189,6 +191,7 @@ function createImcDataBase(db: SQLiteDatabase) {
         'user_name VARCHAR(100)',
         'user_poids FLOAT',
         'user_imc FLOAT',
+        'user_img FLOAT',
         'imc_date DATE',
       ],
       (result: ResultSet) => {
@@ -202,11 +205,12 @@ function createImcDataBase(db: SQLiteDatabase) {
 
 async function getHistoriqueUser(
   profile: UserProfile,
-): Promise<{ date: string; poids: number; imc: number }[]> {
+): Promise<{ date: string; poids: number; imc: number; img: number }[]> {
   const curentDate = new Date()
   const currentDay = curentDate.getDate() + 1
   const currentMonth = curentDate.getMonth() + 1
   const currentYear = curentDate.getFullYear()
+
   let stringMonth = currentMonth.toString()
   let stringDay = currentDay.toString()
 
@@ -227,34 +231,37 @@ async function getHistoriqueUser(
     end: `${currentYear}/${stringMonth}/${stringDay}`,
     start: `${currentYear}/${stringMonth}/${startDay}`,
   }
-  console.log(dateIntervalle, 'DATE INTERVALE')
-  return new Promise<{ date: string; poids: number; imc: number }[]>((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        `SELECT * FROM imc WHERE imc_date BETWEEN  '${dateIntervalle.start}'  AND  '${dateIntervalle.end}' AND user_id = ${profile.id} ORDER BY imc_date ASC`,
-        [],
-        (tx, results) => {
-          console.log(results, 'GET HISTORIQUE')
-          const len = results.rows.length
-          const list: { date: string; poids: number; imc: number }[] = []
 
-          for (let i = 0; i < len; i++) {
-            const ligne: ImcTable = results.rows.item(i)
-            list.push({
-              date: ligne.imc_date.toString(),
-              poids: ligne.user_poids,
-              imc: ligne.user_imc,
-            })
-          }
+  return new Promise<{ date: string; poids: number; imc: number; img: number }[]>(
+    (resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          `SELECT * FROM imc WHERE imc_date BETWEEN  '${dateIntervalle.start}'  AND  '${dateIntervalle.end}' AND user_id = ${profile.id} ORDER BY imc_date ASC`,
+          [],
+          (tx, results) => {
+            console.log(results, 'GET HISTORIQUE')
+            const len = results.rows.length
+            const list: { date: string; poids: number; imc: number; img: number }[] = []
 
-          resolve(list)
-        },
-        error => {
-          reject(error)
-        },
-      )
-    })
-  })
+            for (let i = 0; i < len; i++) {
+              const ligne: ImcTable = results.rows.item(i)
+              list.push({
+                date: ligne.imc_date.toString(),
+                poids: ligne.user_poids,
+                imc: ligne.user_imc,
+                img: ligne.user_img,
+              })
+            }
+
+            resolve(list)
+          },
+          error => {
+            reject(error)
+          },
+        )
+      })
+    },
+  )
 }
 
 export default App

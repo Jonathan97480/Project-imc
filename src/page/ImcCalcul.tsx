@@ -41,11 +41,11 @@ const ImcCalcul = (props: ImcProps) => {
       /* Check user is value exit for today */
       Logic.checkEnterExistForDate(db, profile.id, date).then(_result => {
         if (!_result.user) {
-          const newImc = Logic.calculImc(profile, poids)
-          Logic.insertImc(profile, poids, newImc, date, db)
+          const _result: { imc: number; img: number } = Logic.calculImc(profile, poids)
+          Logic.insertImc(profile, poids, _result, date, db)
             .then(() => {
               setPoids(0)
-              setImc(newImc)
+              setImc(_result.imc)
               props.updateHistorique(profile)
             })
             .catch(err => {
@@ -105,12 +105,12 @@ const ImcCalcul = (props: ImcProps) => {
             }}
             onValidate={() => {
               if (profile) {
-                const newImc = Logic.calculImc(profile, poids)
+                const _result: { imc: number; img: number } = Logic.calculImc(profile, poids)
 
-                Logic.updateImc(showPopin.idEntry, poids, newImc, db)
+                Logic.updateImc(showPopin.idEntry, poids, _result, db)
                   .then(() => {
                     setPoids(0)
-                    setImc(newImc)
+                    setImc(_result.imc)
                     setShowPopin({ active: false, idEntry: 0 })
                     props.updateHistorique(profile)
                   })

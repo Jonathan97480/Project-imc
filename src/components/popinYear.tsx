@@ -98,6 +98,7 @@ async function getDataYear(
               date: element.imc_date,
               poids: element.user_poids,
               imc: element.user_imc,
+              img: element.user_img,
             })
           }
           resolve(data)

@@ -8,6 +8,8 @@ interface UserProfile {
   user_poids_end: number
   user_imc_start: number
   user_imc_end: number
+  user_img_start: number
+  user_img_end: number
   user_avatar: string | undefined
 }
 

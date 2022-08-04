@@ -67,6 +67,8 @@ class Logic {
                 user_imc_start: element.user_imc_start,
                 user_sexe: element.user_sexe,
                 user_size: element.user_size,
+                user_img_end: element.user_img_end,
+                user_img_start: element.user_img_start,
               })
             }
 
@@ -90,6 +92,8 @@ class Logic {
       user_poids_end: 0,
       user_imc_start: 0,
       user_imc_end: 0,
+      user_img_start: 0,
+      user_img_end: 0,
     }
 
     return newProfile
@@ -97,7 +101,7 @@ class Logic {
   static insertImc = async (
     _profile: UserProfile,
     _poids: number,
-    _imc: number,
+    _result: { imc: number; img: number },
     _date: {
       day: number
       month: number
@@ -117,8 +121,8 @@ class Logic {
       const date = `${_date.year}/${stringMonth}/${stringDay}`
       _db.transaction(tx => {
         tx.executeSql(
-          'INSERT INTO imc (user_id, user_name, user_poids, user_imc, imc_date) VALUES (?,?,?,?,?)',
-          [_profile?.id, _profile?.user_name, _poids.toString(), _imc.toString(), date],
+          'INSERT INTO imc (user_id, user_name, user_poids, user_imc,user_img, imc_date) VALUES (?,?,?,?,?,?)',
+          [_profile?.id, _profile?.user_name, _poids.toString(), _result.imc, _result.img, date],
           (tx, result) => {
             _resolve(result)
           },
@@ -132,14 +136,14 @@ class Logic {
   static updateImc = async (
     _idEntry: number,
     _poids: number,
-    _imc: number,
+    _result: { imc: number; img: number },
     _db: SQLiteDatabase,
   ) => {
     return await new Promise((_resolve, _reject) => {
       _db.transaction(_ty => {
         _ty.executeSql(
-          `UPDATE imc SET user_poids=? , user_imc=? WHERE id=${_idEntry} `,
-          [_poids, _imc],
+          `UPDATE imc SET user_poids=? , user_imc=?,user_img=? WHERE id=${_idEntry} `,
+          [_poids, _result.imc, _result.img],
           (ty, _result) => {
             _resolve(_result)
           },
@@ -150,17 +154,24 @@ class Logic {
       })
     })
   }
-  static calculImc = (profile: UserProfile, poids: number) => {
+  static calculImc = (profile: UserProfile, poids: number): { imc: number; img: number } => {
     const value1: number = profile?.user_size * 2
-    let result: number = poids / value1
+    let imc: number = poids / value1
 
-    result = Math.round(result * 100) / 100
+    imc = Math.round(imc * 100) / 100
 
-    result = parseInt(result.toString().split('.')[1])
+    imc = parseInt(imc.toString().split('.')[1])
 
     /*  console.info(result, 'result') */
-
-    return result
+    let img = 0
+    if (profile.user_sexe === 'Femme') {
+      img = 1.2 * imc + 0.23 * profile.user_age - 5.4
+    }
+    if (profile.user_sexe === 'Homme') {
+      img = 1.2 * imc + 0.23 * profile.user_age - 10.8 * 1 - 5.4
+    }
+    img = Math.round(img * 100) / 100
+    return { imc, img }
   }
   static checkEnterExistForDate = async (
     _db: SQLiteDatabase,
@@ -224,6 +235,15 @@ class Logic {
     })
 
     return newImc
+  }
+  static returnImg = (date: custom.dataBaseImcTable[]) => {
+    const newImg: number[] = []
+
+    date.forEach(element => {
+      newImg.push(element.img)
+    })
+
+    return newImg
   }
   static returnPoids = (date: custom.dataBaseImcTable[]) => {
     const newPoids: number[] = []
@@ -413,6 +433,7 @@ class Logic {
                 date: element.imc_date,
                 poids: element.user_poids,
                 imc: element.user_imc,
+                img: element.user_img,
               })
             }
 

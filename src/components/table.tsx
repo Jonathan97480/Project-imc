@@ -1,10 +1,10 @@
 import React from 'react'
-import { Table, TableWrapper, Row, Rows } from 'react-native-table-component'
-import { View, Text, Dimensions, ViewStyle, StyleSheet, TextStyle, Button } from 'react-native'
+import { Table, Row } from 'react-native-table-component'
+import { ViewStyle, StyleSheet, TextStyle } from 'react-native'
 import { useEffect } from 'react'
 
 interface TableProps {
-  data: { imc: number[]; poids: number[]; date?: string[]; label?: string[] }
+  data: { imc: number[]; poids: number[]; date?: string[]; img: number[]; label?: string[] }
 }
 
 const CustomTable = (props: TableProps) => {
@@ -13,8 +13,9 @@ const CustomTable = (props: TableProps) => {
     imc: number[]
     poids: number[]
     date?: string[]
+    img: number[]
     label?: string[]
-  }>({ imc: [], poids: [] })
+  }>({ imc: [], poids: [], img: [] })
 
   useEffect(() => {
     setTableData(data)
@@ -22,7 +23,7 @@ const CustomTable = (props: TableProps) => {
   console.log(tableData)
   return (
     <Table borderStyle={{ borderWidth: 0, borderColor: '#c8e1ff' }}>
-      <Row data={['Date', 'Poids', 'Imc']} style={styles.head} textStyle={styles.headText} />
+      <Row data={['DATE', 'POIDS', 'IMC', 'IMG']} style={styles.head} textStyle={styles.headText} />
       {dataSerialize(tableData).map((rowData, index) => (
         <Row
           key={index}
@@ -50,7 +51,7 @@ const styles = StyleSheet.create<Styles>({
   headText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 18,
     textAlign: 'center',
   },
   row: {
@@ -69,6 +70,7 @@ function dataSerialize(tableData: {
   imc: number[]
   poids: number[]
   date?: string[]
+  img: number[]
   label?: string[]
 }) {
   const rows: (string | number)[][] = []
@@ -77,6 +79,7 @@ function dataSerialize(tableData: {
       tableData.date ? tableData.date[index] : tableData.label ? tableData.label[index] : '',
       tableData.poids[index],
       tableData.imc[index],
+      tableData.img[index].toString() + ' %',
     ]
 
     rows.push(row)
