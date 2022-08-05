@@ -75,6 +75,9 @@ function dataSerialize(tableData: {
 }) {
   const rows: (string | number)[][] = []
   for (let index = 0; index < tableData.imc.length; index++) {
+    if (tableData.img[index] === undefined) {
+      tableData.img[index] = 0
+    }
     const row = [
       tableData.date ? tableData.date[index] : tableData.label ? tableData.label[index] : '',
       tableData.poids[index],

@@ -34,6 +34,9 @@ bug:
   - bug pour le calcul de imc les donées sauvgarder na paraisse pas dans les state @done
   - fixer le bug du component avat qui n'afiche pas les file pour les photos @done
   - fixer le bug du lading infinite quand on lance l'appli pour la premiére fois
+  - fixer bug img quand on slectione filtre par mois ou par anée 
+  - fixer la fuite de mé moire
+  - enlever les log unitiles
 
 Data:
     - génerer un jeu de données pour les tests sur 3 ans et sur 3 profil fictive @done

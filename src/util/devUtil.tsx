@@ -85,7 +85,7 @@ async function createEntries(
   _year: number,
 ) {
   const _newPoids = Math.floor(Math.random() * (110 - 200 + 1)) + 200
-  const _newImc = Logic.calculImc(
+  const _result = Logic.calculImc(
     {
       user_size: _User_size,
       id: 0,
@@ -102,8 +102,11 @@ async function createEntries(
     },
     _newPoids,
   )
-  if (isNaN(_newImc.imc)) {
-    _newImc.imc = 0
+  if (isNaN(_result.imc)) {
+    _result.imc = 0
+  }
+  if (isNaN(_result.img)) {
+    _result.img = 0
   }
   let newDay = _day.toString()
   if (newDay.length === 1) {
@@ -117,8 +120,8 @@ async function createEntries(
   return new Promise((_resolve, _reject) => {
     _db.transaction(tx => {
       tx.executeSql(
-        'INSERT INTO imc (user_id, user_name, user_poids, user_imc,user_img, imc_date) VALUES (?,?,?,?,?,?)',
-        [_idUser, _UserName, _newPoids.toString(), _newImc.imc.toString(), _newImc.img, date],
+        'INSERT INTO imc (user_id, user_name, user_poids, user_imc, user_img, imc_date) VALUES (?,?,?,?,?,?)',
+        [_idUser, _UserName, _newPoids, _result.imc, _result.img, date],
         (tx, result) => {
           _resolve(result)
         },

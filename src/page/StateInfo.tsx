@@ -10,6 +10,7 @@ import {
   ButtonComponent,
   Chart,
   CustomTable,
+  InfoImg,
   PopInMonth,
   PopInWeek,
   PopInYear,
@@ -24,6 +25,7 @@ interface ImcProps {
   db: SQLiteDatabase
   updateHistorique: (val) => void
   historique: { date: string; poids: number; imc: number; img: number }[] | null
+  navigation: any
 }
 
 const StateInfo = (props: ImcProps) => {
@@ -88,6 +90,7 @@ const StateInfo = (props: ImcProps) => {
           <Avatar profile={profile} />
         </View>
         <Text style={[globalStyles.title, globalStyles.gap40]}>{profile?.user_name}</Text>
+        <InfoImg db={props.db} idUSer={profile?.id} />
         <Text style={[globalStyles.paragraphe, globalStyles.gap40]}>
           Votre courbe de perte de poids
         </Text>

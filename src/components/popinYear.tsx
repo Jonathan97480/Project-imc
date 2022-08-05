@@ -94,6 +94,7 @@ async function getDataYear(
           const data: custom.dataBaseImcTable[] = []
           for (let i = 0; i < _results.rows.length; i++) {
             const element = _results.rows.item(i)
+
             data.push({
               date: element.imc_date,
               poids: element.user_poids,
@@ -111,8 +112,13 @@ async function getDataYear(
   })
 }
 
-function getMoyenMonths(data: custom.dataBaseImcTable[]) {
-  const weeks: {
+function getMoyenMonths(data: custom.dataBaseImcTable[]): {
+  poids: number[]
+  imc: number[]
+  img: number[]
+  label: string[]
+} {
+  const months: {
     month1: custom.dataBaseImcTable[]
     month2: custom.dataBaseImcTable[]
     month3: custom.dataBaseImcTable[]
@@ -142,64 +148,66 @@ function getMoyenMonths(data: custom.dataBaseImcTable[]) {
   data.forEach(element => {
     const month = parseInt(element.date.split('/')[1])
     if (month === 1) {
-      weeks.month1.push(element)
+      months.month1.push(element)
     }
     if (month === 2) {
-      weeks.month2.push(element)
+      months.month2.push(element)
     }
     if (month === 3) {
-      weeks.month3.push(element)
+      months.month3.push(element)
     }
     if (month === 4) {
-      weeks.month4.push(element)
+      months.month4.push(element)
     }
     if (month === 5) {
-      weeks.month5.push(element)
+      months.month5.push(element)
     }
     if (month === 6) {
-      weeks.month6.push(element)
+      months.month6.push(element)
     }
     if (month === 7) {
-      weeks.month7.push(element)
+      months.month7.push(element)
     }
     if (month === 8) {
-      weeks.month8.push(element)
+      months.month8.push(element)
     }
     if (month === 9) {
-      weeks.month9.push(element)
+      months.month9.push(element)
     }
     if (month === 10) {
-      weeks.month10.push(element)
+      months.month10.push(element)
     }
     if (month === 11) {
-      weeks.month11.push(element)
+      months.month11.push(element)
     }
     if (month === 12) {
-      weeks.month12.push(element)
+      months.month12.push(element)
     }
   })
   const newData: {
     poids: number[]
     imc: number[]
+    img: number[]
     label: string[]
   } = {
     poids: [],
     imc: [],
+    img: [],
     label: [],
   }
 
-  const month1Moyen = calculMoyen(weeks.month1)
-  const month2Moyen = calculMoyen(weeks.month2)
-  const month3Moyen = calculMoyen(weeks.month3)
-  const month4Moyen = calculMoyen(weeks.month4)
-  const month5Moyen = calculMoyen(weeks.month5)
-  const month6Moyen = calculMoyen(weeks.month6)
-  const month7Moyen = calculMoyen(weeks.month7)
-  const month8Moyen = calculMoyen(weeks.month8)
-  const month9Moyen = calculMoyen(weeks.month9)
-  const month10Moyen = calculMoyen(weeks.month10)
-  const month11Moyen = calculMoyen(weeks.month11)
-  const month12Moyen = calculMoyen(weeks.month12)
+  const month1Moyen = calculMoyen(months.month1)
+  const month2Moyen = calculMoyen(months.month2)
+  const month3Moyen = calculMoyen(months.month3)
+  const month4Moyen = calculMoyen(months.month4)
+  const month5Moyen = calculMoyen(months.month5)
+  const month6Moyen = calculMoyen(months.month6)
+  const month7Moyen = calculMoyen(months.month7)
+  const month8Moyen = calculMoyen(months.month8)
+  const month9Moyen = calculMoyen(months.month9)
+  const month10Moyen = calculMoyen(months.month10)
+  const month11Moyen = calculMoyen(months.month11)
+  const month12Moyen = calculMoyen(months.month12)
 
   newData.poids.push(
     month1Moyen.poids,
@@ -247,18 +255,21 @@ function getMoyenMonths(data: custom.dataBaseImcTable[]) {
   return newData
 }
 
-function calculMoyen(data: custom.dataBaseImcTable[]) {
+function calculMoyen(data: custom.dataBaseImcTable[]): { poids: number; imc: number; img: number } {
   const moyen = {
     poids: 0,
     imc: 0,
+    img: 0,
     date: '',
   }
   data.forEach(element => {
     moyen.poids += element.poids
     moyen.imc += element.imc
+    moyen.img += element.img
   })
   moyen.poids = Math.round(moyen.poids / data.length)
   moyen.imc = Math.round(moyen.imc / data.length)
+  moyen.img = Math.round(moyen.img / data.length)
   moyen.date = data[0].date
 
   return moyen
