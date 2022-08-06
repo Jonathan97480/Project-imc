@@ -7,7 +7,7 @@ interface AvatarProps {
 }
 const Avatar = (props: AvatarProps) => {
   const { profile } = props
-  console.log(profile, 'avatar print informations')
+
   return (
     <>
       {profile?.user_avatar === '' || profile?.user_avatar === null ? (

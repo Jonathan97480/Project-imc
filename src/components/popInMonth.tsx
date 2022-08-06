@@ -24,14 +24,28 @@ const PopInMonth = (props: DialProps) => {
   const [selectedMonth, setSelectedMonth] = useState('')
   const [selectedYear, setSelectedYear] = useState('')
 
+  if (data.length <= 0) {
+    Logic.getAllDateForDataBase(db, idUser)
+      .then(data => {
+        setData(Logic.getDays(null, data))
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
   useEffect(() => {
-    Logic.getAllDateForDataBase(db, idUser).then(data => {
-      const newDate = Logic.getDays(null, data)
-      setMonths(Logic.getAllMonths(newDate))
-      setYears(Logic.getAllYears(newDate))
-      setData(newDate)
-    })
-  }, [])
+    InitPopIn(data)
+    return () => {
+      setMonths([])
+      setYears([])
+    }
+  }, [data])
+
+  const InitPopIn = newDate => {
+    setMonths(Logic.getAllMonths(newDate))
+    setYears(Logic.getAllYears(newDate))
+  }
+
   return (
     <PopIn title="Mois" open={open} close={props.close}>
       <View style={{ width: '90%' }}>
@@ -60,9 +74,13 @@ const PopInMonth = (props: DialProps) => {
         <ButtonComponent
           style={[globalStyles.ButtonStyle, { backgroundColor: '#193427' }]}
           onPress={() => {
-            getDataMonth(selectedMonth, selectedYear, db, idUser).then(data => {
-              props.onValidate(getMoyenWeek(data))
-            })
+            getDataMonth(selectedMonth, selectedYear, db, idUser)
+              .then(data => {
+                props.onValidate(getMoyenWeek(data))
+              })
+              .catch(err => {
+                console.error(err)
+              })
           }}>
           <Text style={globalStyles.btnText}>Valider</Text>
         </ButtonComponent>
@@ -76,7 +94,47 @@ function returnMonthsOptions(data: string[]) {
   const months: { label: string; value: string }[] = []
   for (let index = 0; index < data.length; index++) {
     const month = data[index]
-    months.push({ label: month, value: index.toString() })
+
+    switch (month) {
+      case 'Janvier':
+        months.push({ label: 'Août', value: '1' })
+        break
+      case 'Février':
+        months.push({ label: 'Septembre', value: '2' })
+        break
+      case 'Mars':
+        months.push({ label: 'Octobre', value: '3' })
+        break
+      case 'Avril':
+        months.push({ label: 'Novembre', value: '4' })
+        break
+      case 'Mai':
+        months.push({ label: 'Décembre', value: '5' })
+        break
+      case 'Juin':
+        months.push({ label: 'Janvier', value: '6' })
+        break
+      case 'Juillet':
+        months.push({ label: 'Février', value: '7' })
+        break
+      case 'Août':
+        months.push({ label: 'Mars', value: '8' })
+        break
+      case 'Septembre':
+        months.push({ label: 'Avril', value: '9' })
+        break
+      case 'Octobre':
+        months.push({ label: 'Mai', value: '10' })
+        break
+      case 'Novembre':
+        months.push({ label: 'Juin', value: '11' })
+        break
+      case 'Décembre':
+        months.push({ label: 'Juillet', value: '12' })
+        break
+      default:
+        break
+    }
   }
 
   return months
@@ -149,8 +207,10 @@ function getMoyenWeek(data: custom.dataBaseImcTable[]) {
     week4: [],
     week5: [],
   }
+
   data.forEach(element => {
     const days = parseInt(element.date.split('/')[2])
+
     if (days < 8) {
       weeks.week1.push(element)
     } else if (days < 15) {
@@ -163,45 +223,62 @@ function getMoyenWeek(data: custom.dataBaseImcTable[]) {
       weeks.week5.push(element)
     }
   })
+
   const newData: {
     poids: number[]
     imc: number[]
+    img: number[]
     label: string[]
     date: string[]
   } = {
     poids: [],
     imc: [],
+    img: [],
     label: [],
     date: [],
   }
 
-  const weeks1Moyen = calculMoyen(weeks.week1)
-  const weeks2Moyen = calculMoyen(weeks.week2)
-  const weeks3Moyen = calculMoyen(weeks.week3)
-  const weeks4Moyen = calculMoyen(weeks.week4)
-  const weeks5Moyen = calculMoyen(weeks.week5)
-  newData.poids.push(
-    weeks1Moyen.poids,
-    weeks2Moyen.poids,
-    weeks3Moyen.poids,
-    weeks4Moyen.poids,
-    weeks5Moyen.poids,
-  )
-  newData.imc.push(
-    weeks1Moyen.imc,
-    weeks2Moyen.imc,
-    weeks3Moyen.imc,
-    weeks4Moyen.imc,
-    weeks5Moyen.imc,
-  )
-  newData.label.push('Semaine 1', 'Semaine 2', 'Semaine 3', 'Semaine 4', 'Semaine 5')
-  newData.date.push(
-    weeks1Moyen.date,
-    weeks2Moyen.date,
-    weeks3Moyen.date,
-    weeks4Moyen.date,
-    weeks5Moyen.date,
-  )
+  if (weeks.week1.length > 0) {
+    const weeks1Moyen = calculMoyen(weeks.week1)
+    newData.poids.push(weeks1Moyen.poids)
+    newData.imc.push(weeks1Moyen.imc)
+    newData.img.push(weeks1Moyen.img)
+    newData.label.push('Semaine 1')
+    newData.date.push(weeks1Moyen.date)
+  }
+  if (weeks.week2.length > 0) {
+    const weeks2Moyen = calculMoyen(weeks.week2)
+    newData.poids.push(weeks2Moyen.poids)
+    newData.imc.push(weeks2Moyen.imc)
+    newData.img.push(weeks2Moyen.img)
+    newData.label.push('Semaine 2')
+    newData.date.push(weeks2Moyen.date)
+  }
+  if (weeks.week3.length > 0) {
+    const weeks3Moyen = calculMoyen(weeks.week3)
+    newData.poids.push(weeks3Moyen.poids)
+    newData.imc.push(weeks3Moyen.imc)
+    newData.img.push(weeks3Moyen.img)
+    newData.label.push('Semaine 3')
+    newData.date.push(weeks3Moyen.date)
+  }
+  if (weeks.week4.length > 0) {
+    const weeks4Moyen = calculMoyen(weeks.week4)
+    newData.poids.push(weeks4Moyen.poids)
+    newData.imc.push(weeks4Moyen.imc)
+    newData.img.push(weeks4Moyen.img)
+    newData.label.push('Semaine 4')
+    newData.date.push(weeks4Moyen.date)
+  }
+  if (weeks.week5.length > 0) {
+    const weeks5Moyen = calculMoyen(weeks.week5)
+    newData.poids.push(weeks5Moyen.poids)
+    newData.imc.push(weeks5Moyen.imc)
+    newData.img.push(weeks5Moyen.img)
+    newData.label.push('Semaine 5')
+    newData.date.push(weeks5Moyen.date)
+  }
+
   return newData
 }
 
@@ -209,15 +286,24 @@ function calculMoyen(data: custom.dataBaseImcTable[]) {
   const moyen = {
     poids: 0,
     imc: 0,
+    img: 0,
     date: '',
   }
   data.forEach(element => {
     moyen.poids += element.poids
     moyen.imc += element.imc
+    moyen.img += element.img
   })
   moyen.poids = Math.round(moyen.poids / data.length)
   moyen.imc = Math.round(moyen.imc / data.length)
-  moyen.date = data[0].date
+  moyen.img = Math.round(moyen.img / data.length)
+
+  if (data === null || data.length === 0 || data[0] === null) {
+    console.warn(data, 'GET BIG BUG')
+    moyen.date = 'undefined'
+  } else {
+    moyen.date = data[0].date
+  }
 
   return moyen
 }

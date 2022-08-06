@@ -38,7 +38,6 @@ class Logic {
         })
       } catch (error) {
         _reject(error)
-        console.error(error)
       }
     })
   }
@@ -51,8 +50,7 @@ class Logic {
           [],
           (_tx, _results) => {
             const profile: UserProfile[] = []
-            console.info('ALL PROFILE LOADED')
-            console.log(_results, 'element')
+
             for (let index = 0; index < _results.rows.length; index++) {
               const element = _results.rows.item(index)
 
@@ -162,7 +160,6 @@ class Logic {
 
     imc = parseInt(imc.toString().split('.')[1])
 
-    /*  console.info(result, 'result') */
     let img = 0
     if (profile.user_sexe === 'Femme') {
       img = 1.2 * imc + 0.23 * profile.user_age - 5.4
@@ -366,7 +363,8 @@ class Logic {
 
     return newMonths
   }
-  static getAllDays = (data: custom.Days[]) => {
+
+  static getAllDays = (data: custom.Days[]): custom.WeekArray => {
     const newDays: {
       week1: string[]
       week2: string[]

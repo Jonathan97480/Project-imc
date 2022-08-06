@@ -11,6 +11,13 @@ module custom {
     imc: number
     img: number
   }
+  export interface WeekArray {
+    week1: string[]
+    week2: string[]
+    week3: string[]
+    week4: string[]
+    week5: string[]
+  }
 }
 
 export default custom

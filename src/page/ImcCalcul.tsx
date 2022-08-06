@@ -36,7 +36,6 @@ const ImcCalcul = (props: ImcProps) => {
   }
 
   const handleImc = () => {
-    console.log(profile)
     if (profile?.user_size != undefined && poids != 0) {
       /* Check user is value exit for today */
       Logic.checkEnterExistForDate(db, profile.id, date).then(_result => {
@@ -49,7 +48,7 @@ const ImcCalcul = (props: ImcProps) => {
               props.updateHistorique(profile)
             })
             .catch(err => {
-              console.log(err)
+              console.error(err)
             })
         } else {
           setShowPopin({ active: true, idEntry: _result.user.id })

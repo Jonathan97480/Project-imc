@@ -30,7 +30,7 @@ interface ImcProps {
 
 const StateInfo = (props: ImcProps) => {
   const { profile, historique } = props
-  console.log(historique, 'historique')
+
   const [data2, setData2] = React.useState<custom.dataBaseImcTable[]>(historique ? historique : [])
   useEffect(() => {
     if (historique) {
@@ -50,7 +50,7 @@ const StateInfo = (props: ImcProps) => {
   const [showPopInMonth, setShowPopInMonth] = React.useState(false)
   const [showPopInYear, setShowPopInYear] = React.useState(false)
   const [date, setDate] = React.useState<string[] | undefined>(Logic.getDate(data2))
-  console.info(img, 'IMG CHECK')
+
   const handleWeek = (data: custom.dataBaseImcTable[]) => {
     setShowPopInWeek(false)
     setPoids(Logic.returnPoids(data))

@@ -22,13 +22,26 @@ const PopInYear = (props: DialProps) => {
   const [years, setYears] = useState(Logic.getAllYears(data))
   const [selectedYear, setSelectedYear] = useState('')
 
+  if (data.length <= 0) {
+    Logic.getAllDateForDataBase(db, idUser)
+      .then(data => {
+        setData(Logic.getDays(null, data))
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
+
   useEffect(() => {
-    Logic.getAllDateForDataBase(db, idUser).then(data => {
-      const newDate = Logic.getDays(null, data)
-      setYears(Logic.getAllYears(newDate))
-      setData(newDate)
-    })
-  }, [])
+    initPopIn(data)
+    return () => {
+      setYears([])
+    }
+  }, [data])
+
+  const initPopIn = data => {
+    setYears(Logic.getAllYears(data))
+  }
 
   return (
     <PopIn title="Ânées" open={open} close={props.close}>
@@ -50,9 +63,13 @@ const PopInYear = (props: DialProps) => {
         <ButtonComponent
           style={[globalStyles.ButtonStyle, { backgroundColor: '#193427' }]}
           onPress={() => {
-            getDataYear(selectedYear, db, idUser).then(data => {
-              props.onValidate(getMoyenMonths(data))
-            })
+            getDataYear(selectedYear, db, idUser)
+              .then(data => {
+                props.onValidate(getMoyenMonths(data))
+              })
+              .catch(err => {
+                console.error(err)
+              })
           }}>
           <Text style={globalStyles.btnText}>Valider</Text>
         </ButtonComponent>
@@ -195,62 +212,100 @@ function getMoyenMonths(data: custom.dataBaseImcTable[]): {
     img: [],
     label: [],
   }
+  if (months.month1.length > 0) {
+    const month1Moyen = calculMoyen(months.month1)
+    newData.poids.push(month1Moyen.poids)
+    newData.imc.push(month1Moyen.imc)
+    newData.img.push(month1Moyen.img)
+    newData.label.push('Janvier')
+  }
+  if (months.month2.length > 0) {
+    const month2Moyen = calculMoyen(months.month2)
+    newData.poids.push(month2Moyen.poids)
+    newData.imc.push(month2Moyen.imc)
+    newData.img.push(month2Moyen.img)
+    newData.label.push('Février')
+  }
 
-  const month1Moyen = calculMoyen(months.month1)
-  const month2Moyen = calculMoyen(months.month2)
-  const month3Moyen = calculMoyen(months.month3)
-  const month4Moyen = calculMoyen(months.month4)
-  const month5Moyen = calculMoyen(months.month5)
-  const month6Moyen = calculMoyen(months.month6)
-  const month7Moyen = calculMoyen(months.month7)
-  const month8Moyen = calculMoyen(months.month8)
-  const month9Moyen = calculMoyen(months.month9)
-  const month10Moyen = calculMoyen(months.month10)
-  const month11Moyen = calculMoyen(months.month11)
-  const month12Moyen = calculMoyen(months.month12)
+  if (months.month3.length > 0) {
+    const month3Moyen = calculMoyen(months.month3)
+    newData.poids.push(month3Moyen.poids)
+    newData.imc.push(month3Moyen.imc)
+    newData.img.push(month3Moyen.img)
+    newData.label.push('Mars')
+  }
 
-  newData.poids.push(
-    month1Moyen.poids,
-    month2Moyen.poids,
-    month3Moyen.poids,
-    month4Moyen.poids,
-    month5Moyen.poids,
-    month6Moyen.poids,
-    month7Moyen.poids,
-    month8Moyen.poids,
-    month9Moyen.poids,
-    month10Moyen.poids,
-    month11Moyen.poids,
-    month12Moyen.poids,
-  )
-  newData.imc.push(
-    month1Moyen.imc,
-    month2Moyen.imc,
-    month3Moyen.imc,
-    month4Moyen.imc,
-    month5Moyen.imc,
-    month6Moyen.imc,
-    month7Moyen.imc,
-    month8Moyen.imc,
-    month9Moyen.imc,
-    month10Moyen.imc,
-    month11Moyen.imc,
-    month12Moyen.imc,
-  )
-  newData.label.push(
-    'Jan',
-    'Fév',
-    'Mar',
-    'Avr',
-    'Mai',
-    'Jui',
-    'Juil',
-    'Août',
-    'Sept',
-    'Oct',
-    'Nov',
-    'Déc',
-  )
+  if (months.month4.length > 0) {
+    const month4Moyen = calculMoyen(months.month4)
+    newData.poids.push(month4Moyen.poids)
+    newData.imc.push(month4Moyen.imc)
+    newData.img.push(month4Moyen.img)
+    newData.label.push('Avril')
+  }
+
+  if (months.month5.length > 0) {
+    const month5Moyen = calculMoyen(months.month5)
+    newData.poids.push(month5Moyen.poids)
+    newData.imc.push(month5Moyen.imc)
+    newData.img.push(month5Moyen.img)
+    newData.label.push('Mai')
+  }
+
+  if (months.month6.length > 0) {
+    const month6Moyen = calculMoyen(months.month6)
+    newData.poids.push(month6Moyen.poids)
+    newData.imc.push(month6Moyen.imc)
+    newData.img.push(month6Moyen.img)
+    newData.label.push('Juin')
+  }
+
+  if (months.month7.length > 0) {
+    const month7Moyen = calculMoyen(months.month7)
+    newData.poids.push(month7Moyen.poids)
+    newData.imc.push(month7Moyen.imc)
+    newData.img.push(month7Moyen.img)
+    newData.label.push('Juillet')
+  }
+
+  if (months.month8.length > 0) {
+    const month8Moyen = calculMoyen(months.month8)
+    newData.poids.push(month8Moyen.poids)
+    newData.imc.push(month8Moyen.imc)
+    newData.img.push(month8Moyen.img)
+    newData.label.push('Août')
+  }
+
+  if (months.month9.length > 0) {
+    const month9Moyen = calculMoyen(months.month9)
+    newData.poids.push(month9Moyen.poids)
+    newData.imc.push(month9Moyen.imc)
+    newData.img.push(month9Moyen.img)
+    newData.label.push('Septembre')
+  }
+
+  if (months.month10.length > 0) {
+    const month10Moyen = calculMoyen(months.month10)
+    newData.poids.push(month10Moyen.poids)
+    newData.imc.push(month10Moyen.imc)
+    newData.img.push(month10Moyen.img)
+    newData.label.push('Octobre')
+  }
+
+  if (months.month11.length > 0) {
+    const month11Moyen = calculMoyen(months.month11)
+    newData.poids.push(month11Moyen.poids)
+    newData.imc.push(month11Moyen.imc)
+    newData.img.push(month11Moyen.img)
+    newData.label.push('Novembre')
+  }
+
+  if (months.month12.length > 0) {
+    const month12Moyen = calculMoyen(months.month12)
+    newData.poids.push(month12Moyen.poids)
+    newData.imc.push(month12Moyen.imc)
+    newData.img.push(month12Moyen.img)
+    newData.label.push('Décembre')
+  }
 
   return newData
 }

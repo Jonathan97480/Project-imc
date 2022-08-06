@@ -1,26 +1,39 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React, { useEffect } from 'react'
-import ButtonComponent from './Button'
-import globalStyles from '../styles/global'
 import { SQLiteDatabase } from 'react-native-sqlite-storage'
+import globalStyles from '../styles/global'
 
 const InfoImg = (props: { db: SQLiteDatabase; idUSer: number | undefined }) => {
+  const [data, setData] = React.useState({ img: 0, imc: 0, date: '' })
   const [img, setImg] = React.useState(0)
   const [imc, setImc] = React.useState(0)
   const [date, setDate] = React.useState('')
+
+  if (data.img === 0 && props.idUSer != undefined) {
+    getLastEntry(props.db, props.idUSer)
+      .then(({ date, imc, img }) => {
+        setData({ date, imc, img })
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
+
   useEffect(() => {
-    if (props.idUSer) {
-      getLastEntry(props.db, props.idUSer)
-        .then(({ date, imc, img }) => {
-          setImg(img)
-          setImc(imc)
-          setDate(date)
-        })
-        .catch(err => {
-          console.log(err)
-        })
+    initInfoImg(data)
+    return () => {
+      setImg(0)
+      setImc(0)
+      setDate('')
     }
-  })
+  }, [data])
+
+  const initInfoImg = data => {
+    setImg(data.img)
+    setImc(data.imc)
+    setDate(data.date)
+  }
+
   return (
     <View style={styles.container}>
       <Text style={[styles.title, globalStyles.gap20]}>Dernière Valeur relevée le : {date}</Text>

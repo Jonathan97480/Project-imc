@@ -239,7 +239,7 @@ async function getHistoriqueUser(
           `SELECT * FROM imc WHERE imc_date BETWEEN  '${dateIntervalle.start}'  AND  '${dateIntervalle.end}' AND user_id = ${profile.id} ORDER BY imc_date ASC`,
           [],
           (tx, results) => {
-            console.log(results, 'GET HISTORIQUE')
+            console.info(results, 'GET HISTORIQUE')
             const len = results.rows.length
             const list: { date: string; poids: number; imc: number; img: number }[] = []
 

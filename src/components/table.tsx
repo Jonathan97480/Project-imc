@@ -18,9 +18,16 @@ const CustomTable = (props: TableProps) => {
   }>({ imc: [], poids: [], img: [] })
 
   useEffect(() => {
-    setTableData(data)
+    initTableData(data)
+    return () => {
+      setTableData({ imc: [], poids: [], img: [] })
+    }
   }, [data])
-  console.log(tableData)
+
+  const initTableData = data => {
+    setTableData(data)
+  }
+
   return (
     <Table borderStyle={{ borderWidth: 0, borderColor: '#c8e1ff' }}>
       <Row data={['DATE', 'POIDS', 'IMC', 'IMG']} style={styles.head} textStyle={styles.headText} />

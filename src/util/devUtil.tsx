@@ -76,32 +76,14 @@ async function CreateUser(db: SQLiteDatabase): Promise<UserProfile> {
 }
 
 async function createEntries(
-  _idUser: number,
-  _UserName: string,
-  _User_size: number,
+  _profileUser: UserProfile,
   _db: SQLiteDatabase,
   _day: number,
   _month: number,
   _year: number,
 ) {
   const _newPoids = Math.floor(Math.random() * (110 - 200 + 1)) + 200
-  const _result = Logic.calculImc(
-    {
-      user_size: _User_size,
-      id: 0,
-      user_name: '',
-      user_sexe: '',
-      user_age: 0,
-      user_poids_start: 0,
-      user_poids_end: 0,
-      user_imc_start: 0,
-      user_imc_end: 0,
-      user_avatar: undefined,
-      user_img_end: 0,
-      user_img_start: 0,
-    },
-    _newPoids,
-  )
+  const _result = Logic.calculImc(_profileUser, _newPoids)
   if (isNaN(_result.imc)) {
     _result.imc = 0
   }
@@ -121,7 +103,7 @@ async function createEntries(
     _db.transaction(tx => {
       tx.executeSql(
         'INSERT INTO imc (user_id, user_name, user_poids, user_imc, user_img, imc_date) VALUES (?,?,?,?,?,?)',
-        [_idUser, _UserName, _newPoids, _result.imc, _result.img, date],
+        [_profileUser.id, _profileUser.user_name, _newPoids, _result.imc, _result.img, date],
         (tx, result) => {
           _resolve(result)
         },
@@ -150,26 +132,26 @@ function generateDateForThreeYears(user: UserProfile, max: number, db: SQLiteDat
 
 function gYear(year: number, user: UserProfile, db: SQLiteDatabase, max) {
   if (max > 0) {
-    gMonth(12, year, user, db, max)
+    gMonth(0, year, user, db, max)
   }
 }
 
 function gMonth(month: number, y: number, user: UserProfile, db: SQLiteDatabase, max) {
-  if (month <= 0) {
+  if (month == 12) {
     gYear(y - 1, user, db, max - 1)
   } else {
-    gDay(31, month, y, user, db, max)
+    gDay(0, month, y, user, db, max)
   }
 }
 
 function gDay(day: number, m: number, y: number, user: UserProfile, db, max) {
-  if (day <= 0) {
-    gMonth(m - 1, y, user, db, max)
+  if (day === 31) {
+    gMonth(m + 1, y, user, db, max)
   }
 
-  createEntries(user.id, user.user_name, user.user_size, db, day, m, y).then(result => {
-    if (day > 0) {
-      gDay(day - 1, m, y, user, db, max)
+  createEntries(user, db, day, m, y).then(result => {
+    if (day < 31) {
+      gDay(day + 1, m, y, user, db, max)
     }
   })
 }

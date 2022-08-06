@@ -419,7 +419,7 @@ const PopInAddAvatar = (props: PopInAddAvatarProps) => {
               console.info('Camera permission denied')
             }
           } catch (err) {
-            console.warn(err)
+            console.error(err)
           }
           setShowPopIn(false)
         }}>
@@ -432,7 +432,6 @@ const PopInAddAvatar = (props: PopInAddAvatarProps) => {
 
 async function AddProfileDb(db: SQLiteDatabase, profile: UserProfile): Promise<UserProfile> {
   return await new Promise<UserProfile>((resolve, reject) => {
-    console.log('AddProfileDb', profile)
     db.transaction(tx => {
       tx.executeSql(
         'INSERT INTO profile (user_name, user_sexe, user_age, user_size, user_avatar, user_poids_start, user_poids_end, user_imc_start, user_imc_end,user_img_start,user_img_end) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
@@ -450,7 +449,6 @@ async function AddProfileDb(db: SQLiteDatabase, profile: UserProfile): Promise<U
           profile.user_img_end,
         ],
         (tx, results) => {
-          console.info(results, 'Inserted profile')
           resolve({
             user_name: profile.user_name,
             user_sexe: profile.user_sexe,

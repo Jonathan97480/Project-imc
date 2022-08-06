@@ -19,7 +19,7 @@ interface DialProps {
 const PopInWeek = (props: DialProps) => {
   const { onValidate, open } = props
   const [data, setData] = React.useState<custom.Days[]>([])
-  const [weeks, setWeeks] = React.useState(Logic.getAllDays(data))
+  const [weeks, setWeeks] = React.useState<custom.WeekArray>(Logic.getAllDays(data))
   const [months, setMonths] = React.useState<string[]>(Logic.getAllMonths(data))
   const [filter, setFilter] = React.useState<{ week: number; mount: number }>({
     week: 0,
@@ -32,16 +32,27 @@ const PopInWeek = (props: DialProps) => {
     setFilter({ ...filter, mount: Number(value) })
   }
 
-  useEffect(() => {
-    Logic.getDataForCurrentYear(props.db, props.idUser).then(data => {
-      const newDate = Logic.getDays(data)
-      /* const newData = Logic.getAllDateForCurrentYear(newDate) */
-      setData(newDate)
-      setWeeks(Logic.getAllDays(newDate))
-      setMonths(Logic.getAllMonths(newDate))
-    })
-  }, [])
+  if (data.length <= 0) {
+    Logic.getAllDateForDataBase(props.db, props.idUser)
+      .then(data => {
+        setData(Logic.getDays(null, data))
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
 
+  useEffect(() => {
+    initPopIn(data)
+    return () => {
+      setWeeks(Logic.getAllDays(data))
+      setMonths([])
+    }
+  }, [data])
+  const initPopIn = data => {
+    setWeeks(Logic.getAllDays(data))
+    setMonths(Logic.getAllMonths(data))
+  }
   return (
     <PopIn title="Semaine" open={open} close={props.close}>
       <View style={{ width: '90%' }}>
@@ -88,13 +99,7 @@ const PopInWeek = (props: DialProps) => {
 }
 export default PopInWeek
 
-function returnWeeksOptions(data: {
-  week1: string[]
-  week2: string[]
-  week3: string[]
-  week4: string[]
-  week5: string[]
-}) {
+function returnWeeksOptions(data: custom.WeekArray) {
   const weeks: { label: string; value: string }[] = []
 
   if (data.week1.length > 0) {
@@ -216,10 +221,10 @@ async function GetDateDataBase(
         [],
         (tx, _result) => {
           const data: custom.dataBaseImcTable[] = []
-          /* console.warn(weekDate, 'weekDate') */
+
           for (let index = 0; index < _result.rows.length; index++) {
             const element = _result.rows.item(index)
-            /*  console.log(element, 'weekDate') */
+
             data.push({
               date: element.imc_date,
               poids: element.user_poids,

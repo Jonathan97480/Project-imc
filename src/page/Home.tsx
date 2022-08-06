@@ -139,7 +139,6 @@ const FirstScreen = (props: FirstScreenProps) => {
         <ButtonComponent
           style={globalStyles.ButtonStyle}
           onPress={() => {
-            console.log('add profile')
             props.navigation.navigate('Add Profile')
           }}>
           <Text style={globalStyles.btnText}>Crée profil</Text>
