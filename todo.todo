@@ -1,16 +1,16 @@
 screen:
   - spache_screen:
-      - Crée l'écran
-      - creée le logo de l'application 
-      - ajouter le logo a l'écran
-      - ajouter le logo com icon de l'application
+      - Crée l'écran @done
+      - creée le logo de l'application @done
+      - ajouter le logo a l'écran @done
+      - ajouter le logo com icon de l'application @done
   - home:
       - Ajouter l'icone pour apropos @done
       - Ajouter un bouton pour Ajouter un nouveau profil @done
-      - terminer le btn drag left
+      - terminer le btn drag left @done
   - profile:
       - crée un écran pour éditer sont profil @done
-      - ajouter le bouton ou icon pour retourner a la liste des profils
+      - ajouter le bouton ou icon pour retourner a la liste des profils @done
      
       
   - AddProfil:
@@ -39,7 +39,7 @@ bug:
   - bug quand on prend une photo ou que on la choisit dans la galerie na parait pas @done
   - bug pour le calcul de imc les donées sauvgarder na paraisse pas dans les state @done
   - fixer le bug du component avat qui n'afiche pas les file pour les photos @done
-  - fixer le bug du lading infinite quand on lance l'appli pour la premiére fois
+  - fixer le bug du lading infinite quand on lance l'appli pour la premiére fois @done
   - fixer bug img quand on slectione filtre par mois ou par anée @done
   - fixer la fuite de mé moire @done
   - enlever les log unitiles @done

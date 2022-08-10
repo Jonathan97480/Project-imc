@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/indent */
-import { Home, AddProfile, Profile, ImcCalcul, StateInfo, About } from './src/page'
-import React, { useEffect, useState } from 'react'
-import { dbInit, createTable } from './src/util/model'
+import { Home, AddProfile, Profile, ImcCalcul, StateInfo, About, SplashScreen } from './src/screen'
+import React, { useState } from 'react'
+import { dbInit } from './src/util/model'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { ResultSet, SQLiteDatabase } from 'react-native-sqlite-storage'
+import { SQLiteDatabase } from 'react-native-sqlite-storage'
 import { ImcTable, UserProfile } from './src/interfaces'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -34,11 +34,6 @@ const App = () => {
         console.error(err)
       })
   }
-  /* populateDataBase(db, 1) */
-  useEffect(() => {
-    createProfileDataBase(db)
-    createImcDataBase(db)
-  }, [])
 
   const handleProfile = (profile: UserProfile | null) => {
     if (profile === null) {
@@ -53,7 +48,10 @@ const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator initialRouteName="splashScreen">
+          <Stack.Screen name="splashScreen" options={{ headerShown: false }}>
+            {props => <SplashScreen {...props} db={db} handleProfile={handleProfile} />}
+          </Stack.Screen>
           <Stack.Screen name="Home" options={{ headerShown: false }}>
             {props => <Home {...props} db={db} handleProfile={handleProfile} />}
           </Stack.Screen>
@@ -142,65 +140,6 @@ function HomeTabs(props: HomeTabsProps) {
       </Tab.Screen>
     </Tab.Navigator>
   )
-}
-
-/**
- * Create the profile table if not exist
- * @param db SQLiteDatabase
- */
-function createProfileDataBase(db: SQLiteDatabase) {
-  try {
-    createTable(
-      db,
-      'profile',
-      [
-        'id INTEGER PRIMARY KEY AUTOINCREMENT',
-        'user_name VARCHAR(100)',
-        'user_avatar TEXT',
-        'user_size INTEGER',
-        'user_age INTEGER',
-        'user_sexe TEXT',
-        'user_poids_start FLOAT',
-        'user_poids_end FLOAT',
-        'user_imc_start FLOAT',
-        'user_imc_end  FLOAT',
-        'user_img_start FLOAT',
-        'user_img_end FLOAT',
-      ],
-      (result: ResultSet) => {
-        console.info(result.rowsAffected.toString(), 'ROWS AFFECTED ADD TABLE PROFILE')
-      },
-    )
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-/**
- * Create the imc table if not exist
- * @param db SQLiteDatabase
- */
-function createImcDataBase(db: SQLiteDatabase) {
-  try {
-    createTable(
-      db,
-      'imc',
-      [
-        'id INTEGER PRIMARY KEY AUTOINCREMENT',
-        'user_id INTEGER',
-        'user_name VARCHAR(100)',
-        'user_poids FLOAT',
-        'user_imc FLOAT',
-        'user_img FLOAT',
-        'imc_date DATE',
-      ],
-      (result: ResultSet) => {
-        console.info(result.rowsAffected.toString(), 'ROWS AFFECTED ADD TABLE IMC')
-      },
-    )
-  } catch (error) {
-    console.error(error)
-  }
 }
 
 async function getHistoriqueUser(
