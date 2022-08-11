@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState } from 'react'
 import {
   View,
@@ -238,6 +239,7 @@ const AddProfile = (props: HomeProps) => {
 
                   profile.user_imc_start = _result.imc
                   profile.user_img_start = _result.img
+                  profile.user_poids_end = GetPoidsIdeal(profile)
 
                   AddProfileDb(db, profile).then(_profile => {
                     setProfile(_profile)
@@ -248,8 +250,11 @@ const AddProfile = (props: HomeProps) => {
                     })
                   })
                 } else {
+
                   profile.user_imc_start = _result.imc
                   profile.user_img_start = _result.img
+                  profile.user_poids_end = GetPoidsIdeal(profile)
+
                   UpdateProfileDb(db, profile).then(_profile => {
                     setProfile(_profile)
                     handleProfile(_profile)
@@ -513,4 +518,17 @@ async function UpdateProfileDb(db: SQLiteDatabase, profile: UserProfile): Promis
       )
     })
   })
+}
+
+function GetPoidsIdeal(profile: UserProfile) {
+  if (profile.user_sexe === 'Homme') {
+    return Math.round(
+      profile.user_size - 100 - ((profile.user_size - 150) / 4),
+    )
+  } else {
+    return Math.round(
+      profile.user_size - 100 - ((profile.user_size - 150) / 2.5),
+    )
+  }
+
 }

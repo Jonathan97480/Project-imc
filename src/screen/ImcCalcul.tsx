@@ -44,12 +44,15 @@ const ImcCalcul = (props: ImcProps) => {
     }
   }
 
+  const [currentImc, setCurrentImc] = useState(0)
+
   const handleImc = () => {
     if (profile?.user_size != undefined && poids != 0) {
       /* Check user is value exit for today */
       Logic.checkEnterExistForDate(db, profile.id, date).then(_result => {
         if (!_result.user) {
           const _result: { imc: number; img: number } = Logic.calculImc(profile, poids)
+          setCurrentImc(_result.imc)
           Logic.insertImc(profile, poids, _result, date, db)
             .then(() => {
               setPoids(0)
@@ -77,11 +80,13 @@ const ImcCalcul = (props: ImcProps) => {
       <ScrollView>
         <View>
           <View style={[globalStyles.gap30, { flexDirection: 'row', justifyContent: 'center' }]}>
-            <PoidsCurent poids={poids} />
+            <PoidsCurent db={db} idUser={profile.id} currentImc={currentImc} />
             <PoidsTarget
               poidsStart={profile?.user_poids_start}
-              currentPoids={poids}
-              targetPoids={90}
+              db={db}
+              idUser={profile.id}
+              targetPoids={profile.user_poids_end}
+              currentImc={currentImc}
             />
           </View>
 
@@ -127,12 +132,13 @@ const ImcCalcul = (props: ImcProps) => {
               onValidate={() => {
                 if (profile) {
                   const _result: { imc: number; img: number } = Logic.calculImc(profile, poids)
-
+                  setCurrentImc(_result.imc)
                   Logic.updateImc(showPopin.idEntry, poids, _result, db)
                     .then(() => {
                       setPoids(0)
                       setImc(_result.imc)
                       setShowPopin({ active: false, idEntry: 0 })
+
                       props.updateHistorique(profile)
                     })
                     .catch(error => {
