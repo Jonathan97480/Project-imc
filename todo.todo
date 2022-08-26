@@ -18,7 +18,7 @@ screen:
   
   - CalculImc:
       - Ajouter une icone dans le bouton calculer @done
-      - prévoir un bouton pour relancer le calcul
+      - prévoir un bouton pour relancer le calcul @done
      
   - Apropos:
       - Crée l'écran d'apropos @done
@@ -51,5 +51,14 @@ newFeature:
     - Ajouter un imc de dépare en bd @done
     - Ajoutter un poid voulu en bd @done
     - ajouter un imc voulu en bd @done
-    - Ajouter un encare avec le poids de dépare
-    - une fois le calcul fait rajouter une comparaison entre les deuw poids et félicités l'utilisateur si il a perdu du poids
+    - Ajouter un encare avec le poids de dépare @done
+    - une fois le calcul fait rajouter une comparaison entre les deuw poids et félicités l'utilisateur si il a perdu du poids @done
+fixe:
+    -fixer le style pour les diférentes versions de mobile et tablettes
+    -changer l'icon et le splach screen de l'application 
+    -changer les icones dans la creation du profil pour le choix homme femme
+    -crée la fiche de profil de l'application sur google play 
+    -préparation des assets pour le play store
+    -corriger les fautes de frappe & d'orthographe
+    
+

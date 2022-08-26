@@ -85,7 +85,7 @@ const StateInfo = (props: ImcProps) => {
   return (
     <SafeAreaView style={globalStyles.safeArea}>
       <StatusBar backgroundColor={'#1C2137'} />
-      <ScrollView style={{ position: 'relative' }}>
+      <ScrollView style={{ position: 'relative', marginTop: 10 }}>
         <View style={[{ justifyContent: 'center', alignItems: 'center' }, globalStyles.gap40]}>
           <Avatar profile={profile} />
         </View>

@@ -10,17 +10,16 @@ const PoidsTarget = (props: {
   idUser: number
   currentImc: number
 }) => {
-  if (props.targetPoids === 0) {
-    return null
-  }
-  const [lastPoids, setLastPoids] = React.useState(0)
-
   useEffect(() => {
     initInfoImg()
     return () => {
       setLastPoids(0)
     }
   }, [props.currentImc])
+  if (props.targetPoids === 0) {
+    return null
+  }
+  const [lastPoids, setLastPoids] = React.useState(0)
 
   const initInfoImg = () => {
     getLastEntry(props.db, props.idUser)

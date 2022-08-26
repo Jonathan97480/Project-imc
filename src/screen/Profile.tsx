@@ -19,7 +19,7 @@ const Profile = (props: ProfileProps) => {
   return (
     <SafeAreaView style={globalStyles.safeArea}>
       <StatusBar backgroundColor={'#1C2137'} />
-      <ScrollView>
+      <ScrollView style={{ paddingTop: 10 }}>
         <Text
           style={[
             globalStyles.textColorPrimary,

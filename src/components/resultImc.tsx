@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     borderRadius: 5,
     padding: 10,
+    marginBottom: 30,
   },
   ligne: {
     flexDirection: 'row',

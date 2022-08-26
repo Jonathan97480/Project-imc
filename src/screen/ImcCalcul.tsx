@@ -77,10 +77,10 @@ const ImcCalcul = (props: ImcProps) => {
   return (
     <SafeAreaView style={globalStyles.safeArea}>
       <StatusBar backgroundColor={'#1C2137'} />
-      <ScrollView>
+      <ScrollView style={{ paddingTop: 10 }}>
         <View>
           <View style={[globalStyles.gap30, { flexDirection: 'row', justifyContent: 'center' }]}>
-            <PoidsCurent db={db} idUser={profile.id} currentImc={currentImc} />
+            {currentImc != 0 && <PoidsCurent db={db} idUser={profile.id} currentImc={currentImc} />}
             <PoidsTarget
               poidsStart={profile?.user_poids_start}
               db={db}
@@ -192,7 +192,7 @@ const ImcCalcul = (props: ImcProps) => {
           </View>
 
           <ButtonComponent
-            style={globalStyles.ButtonStyle}
+            style={[globalStyles.ButtonStyle, globalStyles.gap20]}
             onPress={() => {
               if (imc !== 0) {
                 props.navigation.navigate('STATE INFO')
@@ -220,7 +220,25 @@ const ImcCalcul = (props: ImcProps) => {
               </Text>
             </View>
           </ButtonComponent>
-          <ResultImc imc={18} />
+          {imc !== 0 && <ResultImc imc={currentImc} />}
+          {imc !== 0 && (
+            <ButtonComponent
+              style={[globalStyles.gap40, globalStyles.ButtonStyle]}
+              onPress={() => {
+                console.log('REZET CALCUL')
+                setPoids(0)
+                setImc(0)
+              }}>
+              <Text
+                style={[
+                  globalStyles.textColorPrimary,
+                  globalStyles.textSize16,
+                  globalStyles.textBold,
+                ]}>
+                Réinitialiser le calcul
+              </Text>
+            </ButtonComponent>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
